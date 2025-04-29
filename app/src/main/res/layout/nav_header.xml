@@ -5,12 +5,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#1C2526">
+    android:background="#2E2E2E">
 
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@android:drawable/ic_menu_manage" />
+        android:src="@android:drawable/ic_menu_manage"
+        android:tint="#FFFFFF" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,7 +19,7 @@
         android:layout_marginTop="8dp"
         android:text="Đăng nhập"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
