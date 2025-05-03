@@ -1,6 +1,8 @@
 package com.example.cook_lab
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -10,11 +12,14 @@ import com.example.cook_lab.databinding.ActivityMainBinding
 import com.example.cook_lab.model.Recipe
 import com.example.cook_lab.ui.PopularRecipeAdapter
 import com.example.cook_lab.ui.RecentRecipeAdapter
+import com.example.cook_lab.ui.auth.LoginActivity
 import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var isLoggedIn = false // Giả định trạng thái đăng nhập
 
     private val popularRecipes by lazy {
         listOf(
@@ -43,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         // Thiết lập Toolbar
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false) // Tắt biểu tượng điều hướng mặc định
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         // Thiết lập sự kiện nhấn cho logo để mở Drawer
         binding.drawerIcon.setOnClickListener {
@@ -56,11 +61,11 @@ class MainActivity : AppCompatActivity() {
             // TODO: Bổ sung logic mở màn hình thông báo hoặc xử lý thông báo tại đây
         }
 
-        // Thiết lập sự kiện nhấn cho ô tìm kiếm (khi người dùng nhấn Enter hoặc tìm kiếm)
+        // Thiết lập sự kiện nhấn cho ô tìm kiếm
         binding.searchInputLayout.editText?.setOnEditorActionListener { _, _, _ ->
             val query = binding.searchInputLayout.editText?.text.toString()
             Toast.makeText(this, "Tìm kiếm: $query", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic tìm kiếm tại đây (VD: gọi API, lọc danh sách công thức, v.v.)
+            // TODO: Bổ sung logic tìm kiếm tại đây
             true
         }
 
@@ -104,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             // TODO: Bổ sung logic mở màn hình chi tiết công thức tại đây
         }
 
-        // Thiết lập sự kiện nhấn cho tiêu đề "Tìm kiếm gần đây" (nếu cần mở rộng danh sách)
+        // Thiết lập sự kiện nhấn cho tiêu đề "Tìm kiếm gần đây"
         binding.recentRecipesTitle.setOnClickListener {
             Toast.makeText(this, "Mở rộng danh sách tìm kiếm gần đây", Toast.LENGTH_SHORT).show()
             // TODO: Bổ sung logic mở rộng danh sách tìm kiếm gần đây tại đây
@@ -119,6 +124,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDrawer() {
         val navView: NavigationView = binding.navView
+        val headerView = navView.getHeaderView(0)
+        val navHeaderLayout = headerView.findViewById<LinearLayout>(R.id.nav_header_layout)
+
+        // Thiết lập sự kiện nhấn cho toàn bộ nav_header
+        navHeaderLayout.setOnClickListener {
+            if (!isLoggedIn) {
+                startActivity(Intent(this, LoginActivity::class.java))
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                Toast.makeText(this, "Bạn đã đăng nhập", Toast.LENGTH_SHORT).show()
+                // TODO: Bổ sung logic hiển thị thông tin người dùng hoặc mở hồ sơ cá nhân
+            }
+        }
+
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_recently_viewed -> {

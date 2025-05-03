@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#2E2E2E">
+    android:background="#2E2E2E"
+    android:clickable="true"
+    android:focusable="true">
 
     <ImageView
         android:layout_width="48dp"
