@@ -21,6 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Khai báo LoginActivity -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false" />
+
+        <!-- Khai báo RegisterActivity -->
+        <activity
+            android:name=".ui.auth.RegisterActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
