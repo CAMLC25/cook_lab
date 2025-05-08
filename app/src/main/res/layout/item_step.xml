@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Số bước -->
+    <TextView
+        android:id="@+id/tvStepNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"/>
+
+    <!-- Mô tả bước -->
+    <TextView
+        android:id="@+id/tvStepDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:textAlignment="viewStart"
+        android:justificationMode="inter_word"
+        android:textColor="@android:color/white"/>
+
+    <!-- Ảnh bước, ẩn nếu không có -->
+    <ImageView
+        android:id="@+id/imgStep"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:visibility="gone"/>
+
+</LinearLayout>

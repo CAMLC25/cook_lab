@@ -2,177 +2,201 @@ package com.example.cook_lab
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.cook_lab.data.api.ApiClient
+import com.example.cook_lab.data.api.Prefs
+import com.example.cook_lab.data.model.User
 import com.example.cook_lab.databinding.ActivityMainBinding
-import com.example.cook_lab.model.Recipe
-import com.example.cook_lab.ui.PopularRecipeAdapter
-import com.example.cook_lab.ui.RecentRecipeAdapter
+import com.example.cook_lab.ui.StartActivity
 import com.example.cook_lab.ui.auth.LoginActivity
+import com.example.cook_lab.ui.category.CategoryDetailActivity
+import com.example.cook_lab.ui.components.CategoryAdapter
+import com.example.cook_lab.ui.components.RecipeAdapter
+import com.example.cook_lab.ui.recipe.NewRecipesActivity
+import com.example.cook_lab.viewmodel.CategoryViewModel
+import com.example.cook_lab.viewmodel.RecipeViewModel
 import com.google.android.material.navigation.NavigationView
-
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var isLoggedIn = false // Giả định trạng thái đăng nhập
-
-    private val popularRecipes by lazy {
-        listOf(
-            Recipe(name = "Món mặn"),
-            Recipe(name = "Canh"),
-            Recipe(name = "Canh chua"),
-            Recipe(name = "Ức gà áp chảo"),
-            Recipe(name = "Chân giò"),
-            Recipe(name = "Bắp cải"),
-            Recipe(name = "Cà tím"),
-            Recipe(name = "Cá ngừ")
-        )
-    }
-
-    private val recentRecipes by lazy {
-        listOf(
-            Recipe(name = "Canh", searchTime = "Cách đây 3 ngày"),
-            Recipe(name = "Món mặn", searchTime = "Cách đây 3 ngày")
-        )
-    }
+    private var isLoggedIn = false
+    private lateinit var categoryAdapter: CategoryAdapter
+    private lateinit var categoryViewModel: CategoryViewModel
+    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Thiết lập Toolbar
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+//        // Apply system bars insets
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { v, insets ->
+//            val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(sys.left, sys.top, sys.right, sys.bottom)
+//            insets
+//        }
 
-        // Thiết lập sự kiện nhấn cho logo để mở Drawer
-        binding.drawerIcon.setOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
+        setSupportActionBar(binding.toolbar)
+
+        // Determine login state
+        isLoggedIn = !Prefs.token.isNullOrEmpty()
+
+        // Replace menu icon with user avatar when logged in
+        if (isLoggedIn && Prefs.userJson != null) {
+            val user = gson.fromJson(Prefs.userJson, User::class.java)
+            Glide.with(this)
+                .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
+                .placeholder(R.drawable.account)
+                .circleCrop()
+                .into(binding.drawerIcon)
+            // Remove any tint so avatar shows correctly
+            binding.drawerIcon.clearColorFilter()
+            binding.drawerIcon.imageTintList = null
+        } else {
+            binding.drawerIcon.setImageResource(R.drawable.start_activity)
+            val white = ContextCompat.getColor(this, android.R.color.white)
+            binding.drawerIcon.setColorFilter(white)
         }
 
-        // Thiết lập sự kiện nhấn cho icon thông báo
+        // Drawer toggle
+        binding.drawerIcon.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
         binding.notificationIcon.setOnClickListener {
             Toast.makeText(this, "Mở màn hình thông báo", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic mở màn hình thông báo hoặc xử lý thông báo tại đây
         }
-
-        // Thiết lập sự kiện nhấn cho ô tìm kiếm
-        binding.searchInputLayout.editText?.setOnEditorActionListener { _, _, _ ->
-            val query = binding.searchInputLayout.editText?.text.toString()
-            Toast.makeText(this, "Tìm kiếm: $query", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic tìm kiếm tại đây
-            true
+        // Search action
+        binding.searchInputLayout.editText?.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == KeyEvent.KEYCODE_SEARCH || event?.action == KeyEvent.ACTION_DOWN) {
+                val q = v.text.toString()
+                Toast.makeText(this, "Tìm kiếm: $q", Toast.LENGTH_SHORT).show()
+                true
+            } else false
         }
-
-        // Thiết lập sự kiện nhấn cho Floating Action Button
         binding.addRecipeButton.setOnClickListener {
             Toast.makeText(this, "Thêm công thức mới", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic mở màn hình thêm công thức tại đây
         }
-
-        // Thiết lập sự kiện chọn mục trong Bottom Navigation Bar
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_search -> {
-                    Toast.makeText(this, "Đã chọn Tìm kiếm", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic cho tab Tìm kiếm tại đây
+                R.id.nav_home -> {
+                    Toast.makeText(this, "Trang chủ", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.nav_library -> {
-                    Toast.makeText(this, "Đã chọn Kho món ngon", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic cho tab Kho món ngon tại đây
+                    startActivity(Intent(this, KhoActivity::class.java))
                     true
                 }
                 else -> false
             }
         }
 
-        // Thiết lập Navigation Drawer
+        // Danh sách công thức mới
+        binding.newRecipesArrow.setOnClickListener {
+            startActivity(Intent(this, NewRecipesActivity::class.java))
+        }
+
         setupDrawer()
-
-        // Thiết lập RecyclerView cho danh sách phổ biến
-        binding.popularRecipesRecyclerView.layoutManager = GridLayoutManager(this, 2)
-        binding.popularRecipesRecyclerView.adapter = PopularRecipeAdapter(popularRecipes) { recipe ->
-            Toast.makeText(this, "Đã chọn: ${recipe.name}", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic mở màn hình chi tiết công thức tại đây
-        }
-
-        // Thiết lập RecyclerView cho danh sách gần đây
-        binding.recentRecipesRecyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recentRecipesRecyclerView.adapter = RecentRecipeAdapter(recentRecipes) { recipe ->
-            Toast.makeText(this, "Đã chọn: ${recipe.name}", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic mở màn hình chi tiết công thức tại đây
-        }
-
-        // Thiết lập sự kiện nhấn cho tiêu đề "Tìm kiếm gần đây"
-        binding.recentRecipesTitle.setOnClickListener {
-            Toast.makeText(this, "Mở rộng danh sách tìm kiếm gần đây", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic mở rộng danh sách tìm kiếm gần đây tại đây
-        }
-
-        // Thiết lập sự kiện nhấn cho mũi tên bên cạnh "Tìm kiếm gần đây"
-        binding.recentRecipesArrow.setOnClickListener {
-            Toast.makeText(this, "Xem thêm tìm kiếm gần đây", Toast.LENGTH_SHORT).show()
-            // TODO: Bổ sung logic xem thêm danh sách tìm kiếm gần đây tại đây
-        }
+        setupCategoryList()
+        setupNewRecipesList()
     }
 
     private fun setupDrawer() {
         val navView: NavigationView = binding.navView
-        val headerView = navView.getHeaderView(0)
-        val navHeaderLayout = headerView.findViewById<LinearLayout>(R.id.nav_header_layout)
+        val header = navView.getHeaderView(0)
+        val headerLayout = header.findViewById<LinearLayout>(R.id.nav_header_layout)
+        val imageAvatar = header.findViewById<ImageView>(R.id.imageAvatar)
+        val textName = header.findViewById<TextView>(R.id.textName)
+        val textUsername = header.findViewById<TextView>(R.id.textUsername)
 
-        // Thiết lập sự kiện nhấn cho toàn bộ nav_header
-        navHeaderLayout.setOnClickListener {
-            if (!isLoggedIn) {
-                startActivity(Intent(this, LoginActivity::class.java))
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            } else {
-                Toast.makeText(this, "Bạn đã đăng nhập", Toast.LENGTH_SHORT).show()
-                // TODO: Bổ sung logic hiển thị thông tin người dùng hoặc mở hồ sơ cá nhân
-            }
+        // Bind user info if logged in
+        Prefs.userJson?.let { json ->
+            val user = gson.fromJson(json, User::class.java)
+            textName.text = "Xin chào ${user.name}"
+            textUsername.text = "ID: @${user.id_cooklab}"
+            Glide.with(this)
+                .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
+                .placeholder(R.drawable.account)
+                .circleCrop()
+                .into(imageAvatar)
         }
 
-        navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
+        headerLayout.setOnClickListener {
+            if (!isLoggedIn) {
+                startActivity(Intent(this, LoginActivity::class.java))
+            } else {
+                Toast.makeText(this, "Bạn đã đăng nhập", Toast.LENGTH_SHORT).show()
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        // Show logout only when logged in
+        navView.menu.findItem(R.id.nav_logout).isVisible = isLoggedIn
+        navView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_profile -> {
+                    Toast.makeText(this, "Hồ sơ", Toast.LENGTH_SHORT).show()
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
                 R.id.nav_recently_viewed -> {
                     Toast.makeText(this, "Món vừa xem", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic mở màn hình "Món vừa xem" tại đây
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
-                R.id.nav_premium -> {
-                    Toast.makeText(this, "Premium", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic mở màn hình "Premium" tại đây
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
-                }
-                R.id.nav_settings -> {
-                    Toast.makeText(this, "Cài đặt", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic mở màn hình "Cài đặt" tại đây
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
-                }
-                R.id.nav_faq -> {
-                    Toast.makeText(this, "Câu hỏi thường gặp", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic mở màn hình "Câu hỏi thường gặp" tại đây
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
-                }
-                R.id.nav_feedback -> {
-                    Toast.makeText(this, "Gửi góp ý", Toast.LENGTH_SHORT).show()
-                    // TODO: Bổ sung logic mở màn hình "Gửi góp ý" tại đây
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                R.id.nav_logout -> {
+                    lifecycleScope.launch {
+                        try { ApiClient.apiService.logout() } catch (_: Exception) { }
+                        Prefs.clear()
+                        startActivity(Intent(this@MainActivity, StartActivity::class.java))
+                        finishAffinity()
+                    }
                     true
                 }
                 else -> false
             }
         }
+    }
+
+    private fun setupCategoryList() {
+        categoryAdapter = CategoryAdapter { category ->
+            startActivity(Intent(this, CategoryDetailActivity::class.java).apply {
+                putExtra("CATEGORY_ID", category.id)
+                putExtra("CATEGORY_TITLE", category.name)
+            })
+        }
+        binding.categoriesRecyclerView.apply {
+            layoutManager = GridLayoutManager(this@MainActivity, 2)
+            adapter = categoryAdapter
+        }
+        categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
+        categoryViewModel.categories.observe(this) { list -> categoryAdapter.setData(list) }
+        categoryViewModel.error.observe(this) { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun setupNewRecipesList() {
+        val recipeAdapter = RecipeAdapter()
+        binding.newRecipesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recipeAdapter
+        }
+        val recipeViewModel = ViewModelProvider(this)[RecipeViewModel::class.java]
+        recipeViewModel.recipes.observe(this) { recipeAdapter.setData(it) }
+        recipeViewModel.error.observe(this) { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
     }
 
     override fun onBackPressed() {
@@ -182,7 +206,4 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
-    // test
-    // ds
 }

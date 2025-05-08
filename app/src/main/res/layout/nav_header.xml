@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nav_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,13 +9,18 @@
     android:clickable="true"
     android:focusable="true">
 
+    <!-- Avatar người dùng -->
     <ImageView
+        android:id="@+id/imageAvatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@android:drawable/ic_menu_manage"
-        android:tint="#FFFFFF" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/account"
+        android:contentDescription="Avatar" />
 
+    <!-- Tên người dùng hoặc nút Đăng nhập -->
     <TextView
+        android:id="@+id/textName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -25,11 +29,13 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+    <!-- Username hoặc mô tả sơ lược -->
     <TextView
+        android:id="@+id/textUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Lưu và tạo công thức, gửi cooksnap và hơn thế"
+        android:text="Lưu và tạo công thức và hơn thế"
         android:textColor="#B0BEC5"
         android:textSize="14sp" />
 
