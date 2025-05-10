@@ -378,7 +378,97 @@
                     app:tint="@android:color/white"/>
             </LinearLayout>
 
+            <!-- Thông tin người đăng công thức -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:background="@android:color/black"
+                android:padding="16dp"
+                android:layout_marginTop="8dp"
+                android:elevation="4dp">
+
+                <!-- ID công thức, ảnh người đăng, tên người đăng -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:paddingTop="8dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvRecipeId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ID Công thức: 25022005"
+
+                        android:paddingBottom="10dp"
+                        android:textColor="#B0BEC5"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvRecipeDayCreate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:textColor="#B0BEC5"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tvRecipeDayUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:textColor="#B0BEC5"
+                        android:textSize="14sp" />
+
+                <!-- Hình ảnh của tác giả -->
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgAuthor2"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/placeholder"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lên sóng bởi"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"/>
+                <!-- Tên tác giả -->
+                    <TextView
+                        android:id="@+id/tvAuthorName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Admin"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:layout_marginTop="8dp"
+                        android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <!-- Nút follow -->
+                <Button
+                    android:id="@+id/btnFollow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Follow"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/red"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

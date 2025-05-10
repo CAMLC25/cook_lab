@@ -24,7 +24,7 @@ class NewRecipesAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgPhoto: ImageView      = itemView.findViewById(R.id.recipeImage)
-        val btnBookmark: ImageButton = itemView.findViewById(R.id.saveRecipe)
+//        val btnBookmark: ImageButton = itemView.findViewById(R.id.saveRecipe)
         val txtTitle: TextView       = itemView.findViewById(R.id.recipeTitle)
         val txtDesc: TextView        = itemView.findViewById(R.id.recipeDescription)
         val imgAvatar: ImageView     = itemView.findViewById(R.id.userAvatar)
@@ -73,7 +73,7 @@ class NewRecipesAdapter(
 
             // 6. Click listeners
             itemView.setOnClickListener { onItemClick(recipe) }
-            btnBookmark.setOnClickListener { onBookmarkClick(recipe) }
+//            btnBookmark.setOnClickListener { onBookmarkClick(recipe) }
         }
     }
 

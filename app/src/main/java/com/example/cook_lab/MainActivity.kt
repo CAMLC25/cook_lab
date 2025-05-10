@@ -2,6 +2,7 @@ package com.example.cook_lab
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,6 +27,8 @@ import com.example.cook_lab.ui.category.CategoryDetailActivity
 import com.example.cook_lab.ui.components.CategoryAdapter
 import com.example.cook_lab.ui.components.RecipeAdapter
 import com.example.cook_lab.ui.recipe.NewRecipesActivity
+import com.example.cook_lab.ui.recipe.RecipeDetailActivity
+import com.example.cook_lab.ui.recipe.SearchResultsActivity
 import com.example.cook_lab.viewmodel.CategoryViewModel
 import com.example.cook_lab.viewmodel.RecipeViewModel
 import com.google.android.material.navigation.NavigationView
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var isLoggedIn = false
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var categoryViewModel: CategoryViewModel
+
     private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,17 +50,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        // Apply system bars insets
-//        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { v, insets ->
-//            val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(sys.left, sys.top, sys.right, sys.bottom)
-//            insets
-//        }
-
         setSupportActionBar(binding.toolbar)
 
         // Determine login state
         isLoggedIn = !Prefs.token.isNullOrEmpty()
+        Log.e("MainActivity", "isLoggedIn: $isLoggedIn")
 
         // Replace menu icon with user avatar when logged in
         if (isLoggedIn && Prefs.userJson != null) {
@@ -84,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         binding.searchInputLayout.editText?.setOnEditorActionListener { v, actionId, event ->
             if (actionId == KeyEvent.KEYCODE_SEARCH || event?.action == KeyEvent.ACTION_DOWN) {
                 val q = v.text.toString()
+                searchRecipes(q)
                 Toast.makeText(this, "Tìm kiếm: $q", Toast.LENGTH_SHORT).show()
                 true
             } else false
@@ -189,14 +188,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNewRecipesList() {
-        val recipeAdapter = RecipeAdapter()
+        val recipeAdapter = RecipeAdapter { recipe ->
+        startActivity(Intent(this, RecipeDetailActivity::class.java).apply {
+            putExtra("RECIPE_ID", recipe.id)
+        })
+    }
         binding.newRecipesRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = recipeAdapter
         }
         val recipeViewModel = ViewModelProvider(this)[RecipeViewModel::class.java]
-        recipeViewModel.recipes.observe(this) { recipeAdapter.setData(it) }
+        recipeViewModel.recipes.observe(this) { list -> recipeAdapter.setData(list) }
         recipeViewModel.error.observe(this) { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun searchRecipes(query: String) {
+        val intent = Intent(this, SearchResultsActivity::class.java)
+        intent.putExtra("searchQuery", query)
+        Log.e("searchRecipes", "query: $query")
+        intent.putExtra("isLoggedIn", isLoggedIn)
+        Log.e("searchRecipes", "isLoggedIn: $isLoggedIn")
+        startActivity(intent)
     }
 
     override fun onBackPressed() {

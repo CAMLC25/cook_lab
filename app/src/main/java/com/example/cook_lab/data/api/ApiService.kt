@@ -16,6 +16,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @GET("api/recipes")
@@ -80,6 +81,36 @@ interface ApiService {
     suspend fun removeSavedRecipe(
         @Path("id") recipeId: Int
     ): Response<BasicSaveResponse>
+
+
+    @GET("api/user/check-follow/{recipeOwnerId}")
+    suspend fun checkIfUserFollows(
+        @Path("recipeOwnerId") recipeOwnerId: Int
+    ): Response<FollowStatusResponse>
+
+    @POST("api/user/{followeeId}/follow")
+    suspend fun followUser(
+        @Path("followeeId") followeeId: Int
+    ): Response<FollowResponse>
+
+    @DELETE("api/user/{followeeId}/unfollow")
+    suspend fun unfollowUser(
+        @Path("followeeId") followeeId: Int
+    ): Response<FollowResponse>
+
+    @GET("api/user/{userId}/follow-stats")
+    suspend fun getFollowStats(
+        @Path("userId") userId: Int
+    ): Response<FollowStatsResponse>
+
+    // Tìm kiếm công thức cho khách
+    @GET("api/recipes/search/guest")
+    suspend fun searchGuestRecipes(@Query("search") search: String): Response<RecipeResponse>
+
+    // Tìm kiếm công thức cho người dùng đã đăng nhập
+    @GET("api/recipes/search/auth")
+    suspend fun searchAuthRecipes(@Query("search") search: String): Response<RecipeResponse>
+
 }
 
 data class CategoryResponse(
@@ -119,5 +150,18 @@ data class BasicSaveResponse(
     val message: String
 )
 
+data class FollowStatusResponse(
+    val isFollowing: Boolean
+)
+
+data class FollowResponse(
+    val success: Boolean,
+    val message: String
+)
+
+data class FollowStatsResponse(
+    val followersCount: Int,
+    val followingCount: Int
+)
 
 
