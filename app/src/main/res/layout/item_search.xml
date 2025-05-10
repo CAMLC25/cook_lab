@@ -81,17 +81,17 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Bookmark icon -->
-<!--        <ImageButton-->
-<!--            android:id="@+id/saveRecipeIcon"-->
-<!--            android:layout_width="24dp"-->
-<!--            android:layout_height="24dp"-->
-<!--            android:layout_margin="8dp"-->
-<!--            android:layout_marginTop="64dp"-->
-<!--            android:layout_marginEnd="4dp"-->
-<!--            android:background="?attr/selectableItemBackgroundBorderless"-->
-<!--            android:src="@drawable/favorite"-->
-<!--            app:layout_constraintEnd_toEndOf="@id/recipeImage"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/recipeImage"/>-->
+        <!--        <ImageButton-->
+        <!--            android:id="@+id/saveRecipeIcon"-->
+        <!--            android:layout_width="24dp"-->
+        <!--            android:layout_height="24dp"-->
+        <!--            android:layout_margin="8dp"-->
+        <!--            android:layout_marginTop="64dp"-->
+        <!--            android:layout_marginEnd="4dp"-->
+        <!--            android:background="?attr/selectableItemBackgroundBorderless"-->
+        <!--            android:src="@drawable/favorite"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/recipeImage"-->
+        <!--            app:layout_constraintBottom_toBottomOf="@id/recipeImage"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

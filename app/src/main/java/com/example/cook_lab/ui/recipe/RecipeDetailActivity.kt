@@ -1,6 +1,7 @@
 package com.example.cook_lab.ui.recipe
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -19,17 +20,24 @@ import com.example.cook_lab.databinding.ActivityRecipeDetailBinding
 import com.example.cook_lab.ui.components.CommentAdapter
 import com.example.cook_lab.ui.components.IngredientAdapter
 import com.example.cook_lab.ui.components.StepAdapter
+import com.example.cook_lab.viewmodel.FollowViewModel
 import com.example.cook_lab.viewmodel.RecipeDetailViewModel
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecipeDetailBinding
     private val vm by lazy {
         ViewModelProvider(this)[RecipeDetailViewModel::class.java]
     }
+    private val followViewModel by lazy {
+        ViewModelProvider(this)[FollowViewModel::class.java]
+    }
     private val gson = Gson()
     private var recipeId = -1
     private var isSaved = false
+    private var isFollowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +70,12 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
         binding.tvViewAllComments.visibility = View.GONE
 
+        // Observe follow status
+        followViewModel.isFollowing.observe(this) { isFollowed ->
+            isFollowing = isFollowed
+            updateFollowButton()
+        }
+
         // Lấy ID & load
         recipeId = intent.getIntExtra("RECIPE_ID", -1)
         if (recipeId < 0) {
@@ -79,6 +93,22 @@ class RecipeDetailActivity : AppCompatActivity() {
             binding.tvCookTime.text        = r.cook_time
             binding.tvServings.text        = r.servings
             binding.recipeDescription.text = "#${r.category?.name ?: "Chưa có danh mục"}\n${r.description}"
+            binding.tvRecipeId.text = "ID Công thức: ${r.id}"
+
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+            try {
+                val date = inputFormat.parse(r.created_at)
+                val formattedDate = outputFormat.format(date)
+                binding.tvRecipeDayCreate.text = "Lên sóng vào ngày $formattedDate"
+                val date1 = inputFormat.parse(r.updated_at)
+                val formattedDate1 = outputFormat.format(date1)
+                if (formattedDate != formattedDate1)
+                binding.tvRecipeDayUpdate.text = "Cập nhật vào ngày $formattedDate1"
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
             // Handle the bookmark click
             binding.btnBookmark.setOnClickListener {
@@ -99,6 +129,15 @@ class RecipeDetailActivity : AppCompatActivity() {
             } ?: binding.imgAuthor.setImageResource(R.drawable.account)
             binding.recipeUserTitle.text = r.user.name
             binding.userIdCooklab.text   = "ID: @${r.user.id_cooklab}"
+
+            r.user.avatar?.removePrefix("/")?.let { path ->
+                Glide.with(this)
+                    .load(ApiClient.BASE_URL + path)
+                    .placeholder(R.drawable.account)
+                    .circleCrop()
+                    .into(binding.imgAuthor2)
+            } ?: binding.imgAuthor.setImageResource(R.drawable.account)
+            binding.tvAuthorName.text = r.user.name
 
             // Avatar current user
             Prefs.userJson?.let {
@@ -136,6 +175,30 @@ class RecipeDetailActivity : AppCompatActivity() {
 
             // Kiểm tra trạng thái lưu công thức
             checkIfRecipeIsSaved()
+
+            followViewModel.error.observe(this) { errorMessage ->
+                if (!errorMessage.isNullOrEmpty()) {
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                }
+            }
+
+
+            // Lấy ID của người đăng công thức
+            val authorId = r.user.id
+
+            // Kiểm tra trạng thái follow
+            followViewModel.checkIfUserFollows(authorId)
+            Log.e("FollowViewModel", "Check follow status success")
+
+            // Handle Follow/Unfollow button click
+            binding.btnFollow.setOnClickListener {
+                if (isFollowing) {
+                    followViewModel.unfollowUser(authorId)
+                    Log.e("FollowViewModel", "Unfollow user success")
+                } else {
+                    followViewModel.followUser(authorId)
+                }
+            }
         }
 
         // Click reactions
@@ -247,16 +310,16 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     // Lưu công thức
     private fun saveRecipe() {
-        saveOrRemoveRecipe()  // Gọi phương thức lưu hoặc hủy lưu
+        saveOrRemoveRecipe()
         isSaved = true
-        checkIfRecipeIsSaved()  // Kiểm tra lại trạng thái đã lưu
+        checkIfRecipeIsSaved()
     }
 
     // Hủy lưu công thức
     private fun unsaveRecipe() {
-        saveOrRemoveRecipe()  // Gọi phương thức lưu hoặc hủy lưu
+        saveOrRemoveRecipe()
         isSaved = false
-        checkIfRecipeIsSaved()  // Kiểm tra lại trạng thái đã lưu
+        checkIfRecipeIsSaved()
     }
     // Hiển thị hộp thoại xác nhận bỏ lưu
     private fun showUnsaveDialog() {
@@ -266,5 +329,11 @@ class RecipeDetailActivity : AppCompatActivity() {
             .setNegativeButton("Không", null)
             .create()
         dialog.show()
+    }
+
+    private fun updateFollowButton() {
+        // Cập nhật trạng thái của nút "Theo dõi" hoặc "Hủy theo dõi"
+        val followText = if (isFollowing) "Đã theo dõi" else "Theo dõi"
+        binding.btnFollow.text = followText
     }
 }

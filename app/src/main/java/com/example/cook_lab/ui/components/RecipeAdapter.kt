@@ -10,7 +10,9 @@ import com.bumptech.glide.Glide
 import com.example.cook_lab.R
 import com.example.cook_lab.data.model.Recipe
 
-class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+class RecipeAdapter(
+    private val onItemClick: (Recipe) -> Unit
+) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
     private val recipes = mutableListOf<Recipe>()
 
     fun setData(newData: List<Recipe>) {
@@ -53,6 +55,10 @@ class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
             .placeholder(R.drawable.account) // ảnh tạm khi loading
             .error(R.drawable.account)       // ảnh hiển thị nếu lỗi
             .into(holder.imgAvatar)
+
+        holder.itemView.setOnClickListener {
+            onItemClick(recipe)
+        }
     }
 
     override fun getItemCount(): Int = recipes.size

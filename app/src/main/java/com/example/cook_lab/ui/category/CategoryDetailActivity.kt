@@ -1,12 +1,15 @@
 package com.example.cook_lab.ui.category
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cook_lab.databinding.ActivityCategoryDetailBinding
 import com.example.cook_lab.ui.components.CategoryDetailAdapter
+import com.example.cook_lab.ui.recipe.RecipeDetailActivity
 import com.example.cook_lab.viewmodel.CategoryViewModel
 
 class CategoryDetailActivity : AppCompatActivity() {
@@ -24,7 +27,6 @@ class CategoryDetailActivity : AppCompatActivity() {
         val categoryId    = intent.getIntExtra("CATEGORY_ID", -1)
         val categoryTitle = intent.getStringExtra("CATEGORY_TITLE")
             ?: "Chi tiết danh mục"
-
         // 2. Setup toolbar với nút Back và tiêu đề động
         setSupportActionBar(binding.toolbarCategoryDetail)
         supportActionBar?.apply {
@@ -35,8 +37,12 @@ class CategoryDetailActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        // 3. Khởi tạo adapter, truyền title nếu cần hiển thị trong header
-        adapter = CategoryDetailAdapter(categoryTitle)
+        // 3. Khởi tạo adapter với sự kiện click
+        adapter = CategoryDetailAdapter(categoryTitle) { selectedRecipe ->
+            val intent = Intent(this, RecipeDetailActivity::class.java)
+            intent.putExtra("RECIPE_ID", selectedRecipe.id)
+            startActivity(intent)
+        }
 
         // 4. Cấu hình RecyclerView
         binding.recipeRecyclerView.apply {
@@ -47,10 +53,11 @@ class CategoryDetailActivity : AppCompatActivity() {
         // 5. Khởi tạo ViewModel và observe dữ liệu
         viewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
         viewModel.recipes.observe(this) { list ->
+            Log.e("CategoryDetailActivity", "Recipes: $list")
             if (list.isEmpty()) {
                 Toast.makeText(
                     this,
-                    "Không có công thức nào trong danh mục này.",
+                    "Không có công thức nào \n trong danh mục này.",
                     Toast.LENGTH_SHORT
                 ).show()
             }

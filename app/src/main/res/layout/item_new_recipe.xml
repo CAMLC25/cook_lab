@@ -27,16 +27,16 @@
             android:src="@drawable/error_image"/>
 
         <!-- Bookmark icon -->
-        <ImageButton
-            android:id="@+id/saveRecipe"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/favorite"
-            app:tint="@android:color/white"
-            app:layout_constraintTop_toTopOf="@id/recipeImage"
-            app:layout_constraintEnd_toEndOf="@id/recipeImage"/>
+<!--        <ImageButton-->
+<!--            android:id="@+id/saveRecipe"-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:layout_margin="8dp"-->
+<!--            android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--            android:src="@drawable/favorite"-->
+<!--            app:tint="@android:color/white"-->
+<!--            app:layout_constraintTop_toTopOf="@id/recipeImage"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/recipeImage"/>-->
 
         <!-- Container cho text -->
         <LinearLayout

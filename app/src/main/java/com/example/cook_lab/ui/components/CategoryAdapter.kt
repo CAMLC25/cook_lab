@@ -40,7 +40,7 @@ class CategoryAdapter(
                 .into(image)
 
             itemView.setOnClickListener {
-                onItemClick(category)  // giờ đây callback có cả id và name
+                onItemClick(category)
             }
         }
     }

@@ -11,7 +11,8 @@ import com.example.cook_lab.R
 import com.example.cook_lab.data.model.Recipe
 
 class CategoryDetailAdapter(
-    private val categoryTitle: String
+    private val categoryTitle: String,
+    private val onRecipeClick: (Recipe) -> Unit
 ) : RecyclerView.Adapter<CategoryDetailAdapter.CategoryDetailViewHolder>() {
 
     private val recipes = mutableListOf<Recipe>()
@@ -43,7 +44,6 @@ class CategoryDetailAdapter(
         holder.recipeTitle.text = recipe.title
         holder.recipeDescription.text = recipe.description ?: ""
         holder.recipeUserTitle.text = recipe.user.name
-
         // Load recipe image
         val imagePath = recipe.image?.removePrefix("/") ?: ""
         val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
@@ -74,6 +74,10 @@ class CategoryDetailAdapter(
 //            notifyItemChanged(position)
 //            // Optionally callback to listener
 //        }
+
+        holder.itemView.setOnClickListener {
+            onRecipeClick(recipe)
+        }
     }
 
     override fun getItemCount(): Int = recipes.size
@@ -86,5 +90,6 @@ class CategoryDetailAdapter(
         val recipeUserTitle: TextView = itemView.findViewById(R.id.recipeUserTitle)
         val recipeImage: ImageView = itemView.findViewById(R.id.recipeImage)
 //        val saveRecipe: ImageButton = itemView.findViewById(R.id.saveRecipe)
+
     }
 }

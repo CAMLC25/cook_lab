@@ -1,6 +1,7 @@
 package com.example.cook_lab.viewmodel
 
 import androidx.lifecycle.*
+import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Recipe
 import com.example.cook_lab.data.repository.RecipeRepository
 import kotlinx.coroutines.launch
@@ -47,6 +48,5 @@ class RecipeViewModel: ViewModel() {
             }
         }
     }
-
 
 }
