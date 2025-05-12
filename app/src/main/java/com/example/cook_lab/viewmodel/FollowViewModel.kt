@@ -3,6 +3,9 @@ package com.example.cook_lab.viewmodel
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.cook_lab.data.api.ApiClient
+import com.example.cook_lab.data.api.Prefs
+import com.example.cook_lab.data.model.User
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class FollowViewModel : ViewModel() {
@@ -18,6 +21,8 @@ class FollowViewModel : ViewModel() {
 
     private val _followingCount = MutableLiveData<Int>()
     val followingCount: LiveData<Int> get() = _followingCount
+
+    private val gson = Gson()
 
     fun checkIfUserFollows(followeeId: Int) {
         viewModelScope.launch {
@@ -46,12 +51,24 @@ class FollowViewModel : ViewModel() {
 
     fun followUser(followeeId: Int) {
         viewModelScope.launch {
+            // Kiểm tra xem người dùng có đang cố follow chính mình không
+            val currentUser = Prefs.userJson?.let { json ->
+                gson.fromJson(json, User::class.java)
+            }
+            val currentUserId = currentUser?.id
+
+            if (currentUserId == followeeId) {
+                _error.value = "Không thể theo dõi chính mình"
+                Log.e("FollowViewModel", "Attempt to follow self: followeeId=$followeeId")
+                return@launch
+            }
+
             try {
                 val response = ApiClient.apiService.followUser(followeeId)
                 if (response.isSuccessful) {
                     _isFollowing.value = true  // Cập nhật trạng thái theo dõi
                     _error.value = "Đã theo dõi người dùng"
-                    Log.e("FollowViewModel", "Follow user success")
+                    Log.d("FollowViewModel", "Follow user success: followeeId=$followeeId")
                 } else {
                     _isFollowing.value = false
                     _error.value = "Theo dõi thất bại"
@@ -72,6 +89,7 @@ class FollowViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _isFollowing.value = false
                     _error.value = "Đã hủy theo dõi"
+                    Log.d("FollowViewModel", "Unfollow user success: followeeId=$followeeId")
                 } else {
                     _isFollowing.value = true
                     _error.value = "Hủy theo dõi thất bại"
@@ -80,6 +98,7 @@ class FollowViewModel : ViewModel() {
             } catch (e: Exception) {
                 _isFollowing.value = true
                 _error.value = "Lỗi kết nối: ${e.localizedMessage}"
+                Log.e("FollowViewModel", "Unfollow user error: ${e.localizedMessage}")
             }
         }
     }
@@ -91,15 +110,18 @@ class FollowViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _followersCount.value = response.body()?.followersCount ?: 0
                     _followingCount.value = response.body()?.followingCount ?: 0
+                    Log.d("FollowViewModel", "Follow stats: followers=${_followersCount.value}, following=${_followingCount.value}")
                 } else {
                     _followersCount.value = 0
                     _followingCount.value = 0
                     _error.value = "Không thể tải thông tin follow"
+                    Log.e("FollowViewModel", "Get follow stats error: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 _followersCount.value = 0
                 _followingCount.value = 0
                 _error.value = "Lỗi kết nối: ${e.localizedMessage}"
+                Log.e("FollowViewModel", "Get follow stats error: ${e.localizedMessage}")
             }
         }
     }

@@ -8,13 +8,19 @@ import com.example.cook_lab.data.model.MeResponse
 import com.example.cook_lab.data.model.Reaction
 import com.example.cook_lab.data.model.Recipe
 import com.example.cook_lab.data.model.RegisterRequest
+import com.example.cook_lab.data.model.User
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -43,7 +49,7 @@ interface ApiService {
     suspend fun logout(): Response<Unit>
 
     @GET("api/auth/me")
-    suspend fun me(): MeResponse
+    suspend fun me(): Response<MeResponse>
 
     @FormUrlEncoded
     @POST("api/recipes/{id}/react")
@@ -105,12 +111,43 @@ interface ApiService {
 
     // Tìm kiếm công thức cho khách
     @GET("api/recipes/search/guest")
-    suspend fun searchGuestRecipes(@Query("search") search: String): Response<RecipeResponse>
+    suspend fun searchGuestRecipes(
+        @Query("search") search: String
+    ): Response<RecipeResponse>
 
     // Tìm kiếm công thức cho người dùng đã đăng nhập
     @GET("api/recipes/search/auth")
-    suspend fun searchAuthRecipes(@Query("search") search: String): Response<RecipeResponse>
+    suspend fun searchAuthRecipes(
+        @Query("search") search: String
+    ): Response<RecipeResponse>
 
+    @GET("api/search-history/{userId}")
+    suspend fun getSearchHistory(@Path("userId") userId: Int): Response<SearchHistoryResponse>
+
+    @DELETE("api/search-history/{userId}/{id}")
+    suspend fun deleteSearchHistory(
+        @Path("userId") userId: Int,
+        @Path("id") id: Int
+    ): Response<SearchHistoryResponse>
+
+    // Xóa toàn bộ lịch sử tìm kiếm
+    @DELETE("api/search-history")
+    suspend fun deleteAllSearchHistory(): Response<Void>
+
+    // Lấy thông tin người dùng
+    @GET("api/users/{userId}")
+    suspend fun getUserProfile(@Path("userId") userId: Int): Response<UserProfileResponse>
+
+    @Multipart
+    @POST("api/user/update/{userId}")
+    suspend fun updateUserProfile(
+        @Path("userId") userId: Int,
+        @Part("name") name: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("id_cooklab") idCookpad: RequestBody,
+        @Part("password") password: RequestBody?,
+        @Part avatar: MultipartBody.Part?
+    ): Response<UserProfileResponse>
 }
 
 data class CategoryResponse(
@@ -164,4 +201,22 @@ data class FollowStatsResponse(
     val followingCount: Int
 )
 
+data class SearchHistoryResponse(
+    val success: Boolean,
+    val data: List<SearchHistory>,
+    val message: String?
+)
 
+data class SearchHistory(
+    val id: Int,
+    val user_id: Int,
+    val keyword: String,
+    val searched_at: String
+)
+
+data class UserProfileResponse(
+    val success: Boolean,
+    val message: String?,
+    val user: User,
+    val recipes: List<Recipe>
+)

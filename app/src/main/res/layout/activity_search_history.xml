@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Đặt toolbar vào AppBarLayout để CoordinatorLayout quản lý -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,20 +12,20 @@
         android:background="@android:color/black">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbarNewRecipes"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/black"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:navigationIcon="@drawable/ic_arrow_back_white"
-            app:title="Món mới lên sóng gần đây"
+            app:title="Lịch sử tìm kiếm"
             app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- RecyclerView sẽ “co” xuống dưới AppBarLayout -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerNewRecipes"
+        android:id="@+id/searchHistoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
@@ -36,5 +35,4 @@
     <!-- include bottom nav -->
     <include
         layout="@layout/include_bottom_nav"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

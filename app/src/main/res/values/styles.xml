@@ -15,4 +15,20 @@
     <style name="CollapsedAppBarTitle" parent="TextAppearance.AppCompat.Title">
         <item name="android:textColor">@android:color/white</item>
     </style>
+    <!-- Style cho dialog -->
+    <style name="DialogAnimation" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimationStyle</item>
+        <item name="android:windowMinWidthMajor">70%</item> <!-- Điều chỉnh kích thước tối thiểu -->
+        <item name="android:windowMinWidthMinor">70%</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- Animation cho dialog -->
+    <style name="DialogAnimationStyle">
+        <item name="android:windowEnterAnimation">@anim/dialog_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_fade_out</item>
+    </style>
 </resources>

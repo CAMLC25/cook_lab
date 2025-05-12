@@ -48,6 +48,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:paddingBottom="80dp">
 
@@ -471,4 +472,7 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <!-- include bottom nav -->
+    <include
+        layout="@layout/include_bottom_nav"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

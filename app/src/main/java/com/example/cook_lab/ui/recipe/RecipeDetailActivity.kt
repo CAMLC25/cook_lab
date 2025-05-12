@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,8 @@ import com.example.cook_lab.data.model.Comment
 import com.example.cook_lab.data.model.Reaction
 import com.example.cook_lab.data.model.User
 import com.example.cook_lab.databinding.ActivityRecipeDetailBinding
+import com.example.cook_lab.ui.BaseActivity
+import com.example.cook_lab.ui.components.LoginPromptDialog
 import com.example.cook_lab.ui.components.CommentAdapter
 import com.example.cook_lab.ui.components.IngredientAdapter
 import com.example.cook_lab.ui.components.StepAdapter
@@ -26,7 +27,7 @@ import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RecipeDetailActivity : AppCompatActivity() {
+class RecipeDetailActivity : BaseActivity() {
     private lateinit var binding: ActivityRecipeDetailBinding
     private val vm by lazy {
         ViewModelProvider(this)[RecipeDetailViewModel::class.java]
@@ -76,6 +77,13 @@ class RecipeDetailActivity : AppCompatActivity() {
             updateFollowButton()
         }
 
+        // Observe follow errors
+        followViewModel.error.observe(this) { errorMessage ->
+            if (!errorMessage.isNullOrEmpty()) {
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+            }
+        }
+
         // Lấy ID & load
         recipeId = intent.getIntExtra("RECIPE_ID", -1)
         if (recipeId < 0) {
@@ -105,13 +113,14 @@ class RecipeDetailActivity : AppCompatActivity() {
                 val date1 = inputFormat.parse(r.updated_at)
                 val formattedDate1 = outputFormat.format(date1)
                 if (formattedDate != formattedDate1)
-                binding.tvRecipeDayUpdate.text = "Cập nhật vào ngày $formattedDate1"
+                    binding.tvRecipeDayUpdate.text = "Cập nhật vào ngày $formattedDate1"
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
             // Handle the bookmark click
             binding.btnBookmark.setOnClickListener {
+                if (!requireLogin()) return@setOnClickListener
                 if (isSaved) {
                     showUnsaveDialog()  // Remove from saved list with confirmation
                 } else {
@@ -136,7 +145,7 @@ class RecipeDetailActivity : AppCompatActivity() {
                     .placeholder(R.drawable.account)
                     .circleCrop()
                     .into(binding.imgAuthor2)
-            } ?: binding.imgAuthor.setImageResource(R.drawable.account)
+            } ?: binding.imgAuthor2.setImageResource(R.drawable.account)
             binding.tvAuthorName.text = r.user.name
 
             // Avatar current user
@@ -176,38 +185,52 @@ class RecipeDetailActivity : AppCompatActivity() {
             // Kiểm tra trạng thái lưu công thức
             checkIfRecipeIsSaved()
 
-            followViewModel.error.observe(this) { errorMessage ->
-                if (!errorMessage.isNullOrEmpty()) {
-                    Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-                }
-            }
-
-
             // Lấy ID của người đăng công thức
             val authorId = r.user.id
+            // Lấy ID người dùng hiện tại
+            val currentUserId = Prefs.userJson?.let { gson.fromJson(it, User::class.java)?.id }
 
-            // Kiểm tra trạng thái follow
-            followViewModel.checkIfUserFollows(authorId)
-            Log.e("FollowViewModel", "Check follow status success")
+            // Kiểm tra xem người dùng hiện tại có phải là tác giả công thức không
+            if (authorId == currentUserId) {
+                binding.btnFollow.visibility = View.GONE
+                Log.d("RecipeDetailActivity", "Hiding follow button: user is the author (authorId=$authorId)")
+            } else {
+                binding.btnFollow.visibility = View.VISIBLE
+                // Kiểm tra trạng thái follow
+                followViewModel.checkIfUserFollows(authorId)
+                Log.d("RecipeDetailActivity", "Checking follow status for authorId=$authorId")
 
-            // Handle Follow/Unfollow button click
-            binding.btnFollow.setOnClickListener {
-                if (isFollowing) {
-                    followViewModel.unfollowUser(authorId)
-                    Log.e("FollowViewModel", "Unfollow user success")
-                } else {
-                    followViewModel.followUser(authorId)
+                // Handle Follow/Unfollow button click
+                binding.btnFollow.setOnClickListener {
+                    if (!requireLogin()) return@setOnClickListener
+                    if (isFollowing) {
+                        followViewModel.unfollowUser(authorId)
+                        Log.d("RecipeDetailActivity", "Unfollow user: authorId=$authorId")
+                    } else {
+                        followViewModel.followUser(authorId)
+                        Log.d("RecipeDetailActivity", "Follow user: authorId=$authorId")
+                    }
                 }
             }
         }
 
         // Click reactions
-        binding.ivHeart.setOnClickListener { postOrRemoveReaction("heart") }
-        binding.ivMlem.setOnClickListener { postOrRemoveReaction("mlem") }
-        binding.ivClap.setOnClickListener { postOrRemoveReaction("clap") }
+        binding.ivHeart.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            postOrRemoveReaction("heart")
+        }
+        binding.ivMlem.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            postOrRemoveReaction("mlem")
+        }
+        binding.ivClap.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            postOrRemoveReaction("clap")
+        }
 
         // Post comment
         binding.btnPostComment.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
             val txt = binding.etComment.text.toString().trim()
             if (txt.isNotEmpty()) vm.postComment(recipeId, txt)
             else binding.etComment.error = "Bạn chưa nhập bình luận"
@@ -243,6 +266,16 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
     }
 
+    // Kiểm tra trạng thái đăng nhập
+//    private fun requireLogin(): Boolean {
+//        if (Prefs.userJson == null) {
+//            LoginPromptDialog(this).show()
+//            Log.d("RecipeDetailActivity", "Action blocked: user not logged in")
+//            return false
+//        }
+//        return true
+//    }
+
     // Phương thức kiểm tra và gọi API để thả hoặc hủy phản ứng
     private fun postOrRemoveReaction(type: String) {
         // Kiểm tra xem người dùng đã thả biểu tượng cảm xúc này chưa
@@ -261,7 +294,6 @@ class RecipeDetailActivity : AppCompatActivity() {
     private fun findExistingReaction(type: String): Reaction? {
         return vm.recipe.value?.reactions?.find { it.type == type && it.user_id == Prefs.userJson?.let { gson.fromJson(it, User::class.java)?.id } }
     }
-
 
     // Kiểm tra xem người dùng hiện tại có lưu công thức hay không
     private fun checkIfRecipeIsSaved() {
@@ -285,11 +317,11 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     // Phương thức lưu hoặc hủy lưu công thức
     private fun saveOrRemoveRecipe() {
-        val currentUserId_1 = Prefs.userJson?.let { gson.fromJson(it, User::class.java)?.id }
-        isSaved = vm.recipe.value?.saved_by_users?.any { it.id == currentUserId_1 } ?: false
+        val currentUserId = Prefs.userJson?.let { gson.fromJson(it, User::class.java)?.id }
+        isSaved = vm.recipe.value?.saved_by_users?.any { it.id == currentUserId } ?: false
 
         if (isSaved) {
-            vm.removeSavedRecipe(recipeId,)
+            vm.removeSavedRecipe(recipeId)
         } else {
             vm.saveRecipe(recipeId)
         }
@@ -321,6 +353,7 @@ class RecipeDetailActivity : AppCompatActivity() {
         isSaved = false
         checkIfRecipeIsSaved()
     }
+
     // Hiển thị hộp thoại xác nhận bỏ lưu
     private fun showUnsaveDialog() {
         val dialog = AlertDialog.Builder(this)
@@ -332,7 +365,7 @@ class RecipeDetailActivity : AppCompatActivity() {
     }
 
     private fun updateFollowButton() {
-        // Cập nhật trạng thái của nút "Theo dõi" hoặc "Hủy theo dõi"
+        // Cập nhật trạng thái của nút "Theo dõi" hoặc "Đã theo dõi"
         val followText = if (isFollowing) "Đã theo dõi" else "Theo dõi"
         binding.btnFollow.text = followText
     }

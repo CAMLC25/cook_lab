@@ -10,7 +10,7 @@ import retrofit2.Response
 
 class SearchViewModel : ViewModel() {
 
-    private val repository = SearchRepository() // Sử dụng SearchRepository
+    private val repository = SearchRepository()
 
     private val _recipes = MutableLiveData<List<Recipe>>()
     val recipes: LiveData<List<Recipe>> = _recipes
@@ -31,15 +31,28 @@ class SearchViewModel : ViewModel() {
 
                 // Kiểm tra nếu API trả về kết quả thành công
                 if (response.isSuccessful && response.body()?.success == true) {
-                    _recipes.postValue(response.body()?.data)
-                    Log.e("SearchViewModel", "Recipes: ${response.body()?.data}")
+                    val recipes = response.body()?.data
+                    // Nếu tìm thấy công thức, cập nhật LiveData
+                    if (recipes.isNullOrEmpty()) {
+                        _error.postValue("No recipes found.")
+                        _recipes.postValue(emptyList()) // Đặt _recipes rỗng nếu không tìm thấy công thức
+                    } else {
+                        _recipes.postValue(recipes)
+                        Log.e("SearchViewModel", "Recipes: $recipes")
+                    }
                 } else {
+                    // Xử lý khi API không trả về kết quả đúng
                     _error.postValue("No recipes found.")
+                    _recipes.postValue(emptyList())
+                    Log.e("SearchViewModel", "API Error: ${response.message()}")
                 }
             } catch (e: Exception) {
+                // Xử lý lỗi kết nối hoặc các lỗi khác
                 _error.postValue("Error: ${e.message}")
+                _recipes.postValue(emptyList()) // Đặt _recipes rỗng trong trường hợp lỗi
                 Log.e("SearchViewModel", "Error: ${e.message}")
             }
         }
     }
+
 }

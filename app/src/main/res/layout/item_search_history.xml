@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="#FF2E2E2E"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FF2E2E2E">
 
-    <!-- Use ConstraintLayout to prevent TextViews from overlapping -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,8 +52,7 @@
             android:id="@+id/clearSearchHistory"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="auto"
-            android:src="@drawable/ic_cancel_white"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
             app:tint="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

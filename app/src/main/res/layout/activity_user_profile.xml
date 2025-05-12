@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- AppBar với back arrow -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarProfile"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/black"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:navigationIcon="@drawable/ic_arrow_back_white"
+            app:title="Hồ sơ"
+            app:titleTextColor="@android:color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Nội dung scroll được -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center_horizontal">
+
+            <!-- Avatar -->
+            <ImageView
+                android:id="@+id/avatarImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/error_image"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_shape"
+                android:clipToOutline="true"/>
+
+            <!-- Tên -->
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Cam"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <!-- Handle -->
+            <TextView
+                android:id="@+id/userHandle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="camdeptrai"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurfaceVariant"/>
+
+            <!-- Follow counts -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/followersCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorOnSurface"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Đã theo dõi"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:layout_marginEnd="24dp"/>
+
+                <TextView
+                    android:id="@+id/followingCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorOnSurface"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Theo dõi"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorOnSurface"/>
+            </LinearLayout>
+
+            <!-- Edit profile button -->
+            <Button
+                android:id="@+id/btnEditProfile"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Sửa hồ sơ cá nhân"
+                app:strokeColor="?attr/colorOnSurface"
+                app:strokeWidth="1dp"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <!-- Tổng số công thức -->
+            <TextView
+                android:id="@+id/tvRecipeCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="2.225 món"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <!-- RecyclerView hiển thị các công thức -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvUserRecipes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="never"
+                android:layout_marginTop="8dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom nav chung -->
+    <include
+        layout="@layout/include_bottom_nav"/>
+
+    <!-- ProgressBar for loading effect -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="?attr/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

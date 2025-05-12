@@ -35,6 +35,7 @@ class CategoryViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _error.postValue("Lỗi kết nối: ${e.message}")
+                Log.e("CategoryVM", "Lỗi: ${e.message}")
             }
         }
     }
