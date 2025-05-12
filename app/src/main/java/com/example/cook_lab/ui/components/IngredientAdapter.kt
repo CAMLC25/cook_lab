@@ -19,7 +19,7 @@ class IngredientAdapter : ListAdapter<Ingredient, IngredientAdapter.VH>(DIFF) {
     }
     inner class VH(v: View): RecyclerView.ViewHolder(v) {
         private val name: TextView = v.findViewById(R.id.tvIngredientName)
-        fun bind(i: Ingredient) { name.text = i.name }
+        fun bind(i: Ingredient) { name.text = "- ${i.name}" }
     }
     override fun onCreateViewHolder(p: ViewGroup, viewType: Int) =
         VH(LayoutInflater.from(p.context).inflate(R.layout.item_ingredient, p, false))

@@ -2,6 +2,7 @@ package com.example.cook_lab.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.MenuItem
 import android.view.View
@@ -98,6 +99,7 @@ class LoginActivity : AppCompatActivity() {
                             if (e is HttpException) "Lỗi máy chủ: ${e.code()}" else "Không thể kết nối đến server",
                             Toast.LENGTH_LONG
                         ).show()
+                        Log.e("LoginActivity_ngu", "e", e)
                     }
                 } finally {
                     binding.progressBar.visibility = View.GONE

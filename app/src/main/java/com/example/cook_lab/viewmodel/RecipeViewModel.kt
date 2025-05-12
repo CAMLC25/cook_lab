@@ -1,5 +1,6 @@
 package com.example.cook_lab.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Recipe
@@ -30,6 +31,7 @@ class RecipeViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 _error.postValue("Lỗi kết nối: ${e.message}")
+                Log.e("RecipeViewModel", "Error: ${e.message}")
             }
         }
     }
@@ -45,6 +47,7 @@ class RecipeViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 _error.postValue("Lỗi kết nối: ${e.message}")
+                Log.e("RecipeViewModel", "Error: ${e.message}")
             }
         }
     }

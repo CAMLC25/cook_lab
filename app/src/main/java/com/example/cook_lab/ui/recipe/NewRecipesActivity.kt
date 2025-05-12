@@ -3,14 +3,14 @@ package com.example.cook_lab.ui.recipe
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.cook_lab.databinding.ActivityNewRecipesBinding
+import com.example.cook_lab.ui.BaseActivity
 import com.example.cook_lab.ui.components.NewRecipesAdapter
 import com.example.cook_lab.viewmodel.RecipeViewModel
 
-class NewRecipesActivity : AppCompatActivity() {
+class NewRecipesActivity : BaseActivity() {
     private lateinit var binding: ActivityNewRecipesBinding
     private lateinit var viewModel: RecipeViewModel
     private lateinit var adapter: NewRecipesAdapter

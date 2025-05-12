@@ -4,14 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- AppBar with Toolbar and Search Input -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:background="?attr/colorSurface">
 
-        <!-- Toolbar with Back button -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -22,7 +20,6 @@
             app:titleTextColor="@android:color/white"
             app:navigationContentDescription="back" />
 
-        <!-- Search Input Layout -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/searchInputLayout"
             android:layout_width="match_parent"
@@ -51,24 +48,15 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- RecyclerView for displaying search results -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Text to show when no results are found -->
-    <TextView
-        android:id="@+id/noResultsText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Không có kết quả tìm kiếm."
-        android:textSize="16sp"
-        android:textColor="?attr/colorOnSurface"
-        android:gravity="center"
-        android:visibility="gone" />
+        android:layout_marginBottom="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <!-- include bottom nav -->
+    <include
+        layout="@layout/include_bottom_nav"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

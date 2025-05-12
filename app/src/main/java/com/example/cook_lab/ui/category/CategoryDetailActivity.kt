@@ -7,12 +7,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cook_lab.R
 import com.example.cook_lab.databinding.ActivityCategoryDetailBinding
+import com.example.cook_lab.ui.BaseActivity
 import com.example.cook_lab.ui.components.CategoryDetailAdapter
 import com.example.cook_lab.ui.recipe.RecipeDetailActivity
 import com.example.cook_lab.viewmodel.CategoryViewModel
 
-class CategoryDetailActivity : AppCompatActivity() {
+class CategoryDetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoryDetailBinding
     private lateinit var viewModel: CategoryViewModel

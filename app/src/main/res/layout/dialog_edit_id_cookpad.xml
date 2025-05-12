@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    android:layout_margin="16dp">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thay đổi ID CookLab"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginBottom="12dp"
+        android:textStyle="bold"/>
+
+    <!-- Input ID -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/search_input_background"
+        android:padding="8dp"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:text="@"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
+
+        <EditText
+            android:id="@+id/edit_id_cookpad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="@color/black"
+            android:text=""
+            android:textSize="16sp"
+            android:inputType="text"/>
+    </LinearLayout>
+
+    <!-- Gợi ý về ID Cookpad -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ID Cookpad của bạn nên có:\n• 4 - 20 ký tự\n• Chữ cái, chữ số, hoặc dấu gạch ngang dưới _"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:paddingEnd="16dp"/>
+
+    <!-- Nút xác nhận -->
+    <Button
+        android:id="@+id/btnConfirmCookId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xác nhận ID Cookpad"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/colorPrimary"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"/>
+
+    <!-- Nút hủy -->
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hủy"
+        android:textColor="@color/black"
+        android:backgroundTint="#FF5722"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

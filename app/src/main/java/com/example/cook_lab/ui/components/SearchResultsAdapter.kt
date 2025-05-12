@@ -1,19 +1,20 @@
 package com.example.cook_lab.ui.components
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cook_lab.R
 import com.example.cook_lab.data.model.Recipe
 import com.example.cook_lab.databinding.ItemSearchBinding
+import com.example.cook_lab.databinding.ItemSearchEmptyBinding
 
-class SearchResultsAdapter(
-    private val onRecipeClick: (Recipe) -> Unit
-) : RecyclerView.Adapter<SearchResultsAdapter.SearchResultsViewHolder>() {
+class SearchResultsAdapter(private val onRecipeClick: (Recipe) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    companion object {
+        private const val VIEW_TYPE_EMPTY = 0
+        private const val VIEW_TYPE_ITEM = 1
+    }
 
     private val recipes = mutableListOf<Recipe>()
 
@@ -23,46 +24,63 @@ class SearchResultsAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultsViewHolder {
-        val binding = ItemSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false)  // Sử dụng ViewBinding
-        return SearchResultsViewHolder(binding)
-    }
+    override fun getItemCount(): Int = if (recipes.isEmpty()) 1 else recipes.size
 
-    override fun onBindViewHolder(holder: SearchResultsViewHolder, position: Int) {
-        val recipe = recipes[position]
+    override fun getItemViewType(position: Int): Int =
+        if (recipes.isEmpty()) VIEW_TYPE_EMPTY else VIEW_TYPE_ITEM
 
-        // Bind thông tin công thức
-        holder.binding.recipeTitle.text = recipe.title
-        holder.binding.recipeDescription.text = recipe.description ?: "No description available"
-        holder.binding.recipeUserTitle.text = recipe.user?.name ?: "Unknown Author"
-
-        // Load ảnh công thức
-        val imagePath = recipe.image?.removePrefix("/") ?: ""
-        val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
-        Glide.with(holder.itemView)
-            .load(fullImageUrl)
-            .placeholder(R.drawable.error_image)
-            .error(R.drawable.error_image)
-            .into(holder.binding.recipeImage)
-
-        // Load avatar người dùng
-        val avatarPath = recipe.user?.avatar?.removePrefix("/") ?: ""
-        val avatarUrl = "http://192.168.88.157:8000/$avatarPath"
-        Glide.with(holder.itemView)
-            .load(avatarUrl)
-            .placeholder(R.drawable.account)
-            .error(R.drawable.account)
-            .circleCrop()
-            .into(holder.binding.userAvatar)
-
-        // Xử lý sự kiện khi click vào công thức
-        holder.itemView.setOnClickListener {
-            onRecipeClick(recipe)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_EMPTY) {
+            val binding = ItemSearchEmptyBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+            EmptyViewHolder(binding)
+        } else {
+            val binding = ItemSearchBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+            SearchResultsViewHolder(binding, onRecipeClick)
         }
     }
 
-    override fun getItemCount(): Int = recipes.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is SearchResultsViewHolder) {
+            holder.bind(recipes[position])
+        }
+        // EmptyViewHolder không cần bind gì
+    }
 
-    class SearchResultsViewHolder(val binding: ItemSearchBinding) : RecyclerView.ViewHolder(binding.root)
+    class SearchResultsViewHolder(
+        private val binding: ItemSearchBinding,
+        private val onRecipeClick: (Recipe) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(recipe: Recipe) {
+            binding.recipeTitle.text = recipe.title
+            binding.recipeDescription.text = recipe.description ?: "No description available"
+            binding.recipeUserTitle.text = recipe.user?.name ?: "Unknown Author"
+
+            val imagePath = recipe.image?.removePrefix("/") ?: ""
+            val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+            Glide.with(binding.root)
+                .load(fullImageUrl)
+                .placeholder(R.drawable.error_image)
+                .error(R.drawable.error_image)
+                .into(binding.recipeImage)
+
+            val avatarPath = recipe.user?.avatar?.removePrefix("/") ?: ""
+            val avatarUrl = "http://192.168.88.157:8000/$avatarPath"
+            Glide.with(binding.root)
+                .load(avatarUrl)
+                .placeholder(R.drawable.account)
+                .error(R.drawable.account)
+                .circleCrop()
+                .into(binding.userAvatar)
+
+            binding.root.setOnClickListener { onRecipeClick(recipe) }
+        }
+    }
+
+    class EmptyViewHolder(binding: ItemSearchEmptyBinding) : RecyclerView.ViewHolder(binding.root)
 }
 
