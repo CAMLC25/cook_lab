@@ -60,5 +60,11 @@ class NewRecipesActivity : BaseActivity() {
         }
 
         viewModel.fetchAllNewRecipes()
+
+        binding.addRecipeButton.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            startActivity(Intent(this, CreateRecipeActivity::class.java))
+            Toast.makeText(this, "Mở màn hình tạo công thức", Toast.LENGTH_SHORT).show()
+        }
     }
 }

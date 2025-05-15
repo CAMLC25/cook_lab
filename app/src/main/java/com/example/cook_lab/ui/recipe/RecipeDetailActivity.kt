@@ -1,5 +1,6 @@
 package com.example.cook_lab.ui.recipe
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,6 +22,7 @@ import com.example.cook_lab.ui.components.LoginPromptDialog
 import com.example.cook_lab.ui.components.CommentAdapter
 import com.example.cook_lab.ui.components.IngredientAdapter
 import com.example.cook_lab.ui.components.StepAdapter
+import com.example.cook_lab.ui.profile.CustomerProfileActivity
 import com.example.cook_lab.viewmodel.FollowViewModel
 import com.example.cook_lab.viewmodel.RecipeDetailViewModel
 import com.google.gson.Gson
@@ -135,8 +137,19 @@ class RecipeDetailActivity : BaseActivity() {
                     .placeholder(R.drawable.account)
                     .circleCrop()
                     .into(binding.imgAuthor)
+                // Khi nhấn vào ảnh tác giả, chuyển đến trang CustomerProfileActivity
+                binding.imgAuthor.setOnClickListener {
+                    val intent = Intent(this, CustomerProfileActivity::class.java)
+                    intent.putExtra("USER_ID", r.user.id) // Truyền ID người dùng tác giả
+                    startActivity(intent)
+                }
             } ?: binding.imgAuthor.setImageResource(R.drawable.account)
             binding.recipeUserTitle.text = r.user.name
+            binding.recipeUserTitle.setOnClickListener {
+                val intent = Intent(this, CustomerProfileActivity::class.java)
+                intent.putExtra("USER_ID", r.user.id) // Truyền ID người dùng tác giả
+                startActivity(intent)
+            }
             binding.userIdCooklab.text   = "ID: @${r.user.id_cooklab}"
 
             r.user.avatar?.removePrefix("/")?.let { path ->
@@ -145,8 +158,19 @@ class RecipeDetailActivity : BaseActivity() {
                     .placeholder(R.drawable.account)
                     .circleCrop()
                     .into(binding.imgAuthor2)
+                // Khi nhấn vào ảnh tác giả thứ 2, chuyển đến trang CustomerProfileActivity
+                binding.imgAuthor2.setOnClickListener {
+                    val intent = Intent(this, CustomerProfileActivity::class.java)
+                    intent.putExtra("USER_ID", r.user.id) // Truyền ID người dùng tác giả
+                    startActivity(intent)
+                }
             } ?: binding.imgAuthor2.setImageResource(R.drawable.account)
             binding.tvAuthorName.text = r.user.name
+            binding.tvAuthorName.setOnClickListener {
+                val intent = Intent(this, CustomerProfileActivity::class.java)
+                intent.putExtra("USER_ID", r.user.id) // Truyền ID người dùng tác giả
+                startActivity(intent)
+            }
 
             // Avatar current user
             Prefs.userJson?.let {
@@ -228,6 +252,12 @@ class RecipeDetailActivity : BaseActivity() {
             postOrRemoveReaction("clap")
         }
 
+        binding.addRecipeButton.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            startActivity(Intent(this, CreateRecipeActivity::class.java))
+            Toast.makeText(this, "Mở màn hình tạo công thức", Toast.LENGTH_SHORT).show()
+        }
+
         // Post comment
         binding.btnPostComment.setOnClickListener {
             if (!requireLogin()) return@setOnClickListener
@@ -265,16 +295,6 @@ class RecipeDetailActivity : BaseActivity() {
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         }
     }
-
-    // Kiểm tra trạng thái đăng nhập
-//    private fun requireLogin(): Boolean {
-//        if (Prefs.userJson == null) {
-//            LoginPromptDialog(this).show()
-//            Log.d("RecipeDetailActivity", "Action blocked: user not logged in")
-//            return false
-//        }
-//        return true
-//    }
 
     // Phương thức kiểm tra và gọi API để thả hoặc hủy phản ứng
     private fun postOrRemoveReaction(type: String) {

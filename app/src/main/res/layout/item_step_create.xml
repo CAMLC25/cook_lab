@@ -1,0 +1,54 @@
+<!-- layout/item_step_create.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@color/input_background">
+
+    <TextView
+        android:id="@+id/stepTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bước"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/stepEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/input_background"
+        android:hint="Mô tả bước..."
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
+        android:padding="8dp" />
+
+    <ImageView
+        android:id="@+id/stepImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:background="@color/input_background"
+        android:visibility="gone"
+        android:contentDescription="Ảnh bước" />
+
+    <Button
+        android:id="@+id/addStepImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:text="Chọn ảnh"
+        android:textColor="@color/text_primary"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/removeStepButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:text="Xóa bước"
+        android:textColor="@color/text_primary"
+        android:layout_marginTop="8dp" />
+</LinearLayout>

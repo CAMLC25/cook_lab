@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#2E2E2E"
+    android:background="@color/black"
     android:clickable="true"
     android:focusable="true">
 
@@ -15,7 +15,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/account"
+        android:src="@drawable/users_recipe"
         android:contentDescription="Avatar" />
 
     <!-- Tên người dùng hoặc nút Đăng nhập -->

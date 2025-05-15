@@ -8,7 +8,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -18,6 +17,8 @@ import com.example.cook_lab.data.api.UserProfileResponse
 import com.example.cook_lab.databinding.ActivityUserProfileBinding
 import com.example.cook_lab.ui.BaseActivity
 import com.example.cook_lab.ui.components.UserRecipeAdapter
+import com.example.cook_lab.ui.recipe.CreateRecipeActivity
+import com.example.cook_lab.ui.recipe.EditRecipeActivity
 import com.example.cook_lab.viewmodel.UserProfileViewModel
 
 class UserProfileActivity : BaseActivity() {
@@ -38,7 +39,6 @@ class UserProfileActivity : BaseActivity() {
         setSupportActionBar(binding.toolbarProfile)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbarProfile.setNavigationOnClickListener {
-            // Gửi kết quả RESET_REQUIRED khi nhấn nút Back
             setResult(Activity.RESULT_OK, Intent().putExtra("RESET_REQUIRED", true))
             finish()
         }
@@ -58,15 +58,22 @@ class UserProfileActivity : BaseActivity() {
         viewModel.userProfile.observe(this) { response ->
             response?.let {
                 displayUserProfile(it)
-                // Ẩn loadingLayout khi dữ liệu được tải
                 binding.loadingLayout.visibility = View.GONE
+            }
+        }
+
+        // Quan sát kết quả trả về từ việc xóa công thức
+        viewModel.deleteRecipeResponse.observe(this) { response ->
+            if (response != null) {
+                Toast.makeText(this, "Xóa công thức thành công!", Toast.LENGTH_SHORT).show()
+                // Sau khi xóa, tải lại danh sách công thức
+                viewModel.getUserProfile(userId)
             }
         }
 
         // Observe errors
         viewModel.error.observe(this) { error ->
             Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-            // Ẩn loadingLayout nếu có lỗi
             binding.loadingLayout.visibility = View.GONE
         }
 
@@ -98,31 +105,41 @@ class UserProfileActivity : BaseActivity() {
         binding.tvRecipeCount.text = "${userProfile.recipes.size} món"
 
         // 4. Setup RecyclerView đúng cách
-        val adapter = UserRecipeAdapter(userProfile.recipes)
+        val adapter = UserRecipeAdapter(userProfile.recipes, { recipeId ->
+            // Xử lý xóa công thức khi nhấn giữ
+            viewModel.deleteRecipe(recipeId)
+        }, { recipeId ->
+            // Chuyển sang màn hình chỉnh sửa công thức
+            val intent = Intent(this, EditRecipeActivity::class.java)
+            intent.putExtra("RECIPE_ID", recipeId)
+            startActivity(intent)
+        })
+
         binding.rvUserRecipes.apply {
             layoutManager = LinearLayoutManager(this@UserProfileActivity)
             this.adapter = adapter
+        }
+
+        binding.addRecipeButton.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            startActivity(Intent(this, CreateRecipeActivity::class.java))
+            Toast.makeText(this, "Mở màn hình tạo công thức", Toast.LENGTH_SHORT).show()
         }
 
         Log.d("UserProfile", "Recipes: ${userProfile.recipes.size}")
     }
 
     private fun resetToInitialState() {
-        // Hiển thị loadingLayout
         binding.loadingLayout.visibility = View.VISIBLE
 
-        // Trì hoãn 2 giây để hiển thị hiệu ứng loading
         Handler(Looper.getMainLooper()).postDelayed({
             val userId = intent.getIntExtra("USER_ID", -1)
             if (userId != -1) {
-                // Gọi lại API để làm mới dữ liệu
                 viewModel.getUserProfile(userId)
-                // Cuộn RecyclerView về đầu
                 binding.rvUserRecipes.scrollToPosition(0)
-                // Ẩn loadingLayout sau khi reset
                 binding.loadingLayout.visibility = View.GONE
             }
-        }, 2000) // Trì hoãn 2000ms (2 giây)
+        }, 2000)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

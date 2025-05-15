@@ -6,7 +6,6 @@ data class Recipe(
     val description: String?,
     val image: String?,
     val category_id: Int,
-//    val category_name: String?,
     val user_id: Int,
     val user: User,
     val category: Category,

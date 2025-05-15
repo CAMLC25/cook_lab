@@ -2,6 +2,7 @@ package com.example.cook_lab.data.api
 
 import com.example.cook_lab.data.model.Category
 import com.example.cook_lab.data.model.Comment
+import com.example.cook_lab.data.model.CreateRecipeResponse
 import com.example.cook_lab.data.model.LoginRequest
 import com.example.cook_lab.data.model.LoginResponse
 import com.example.cook_lab.data.model.MeResponse
@@ -19,7 +20,6 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -88,7 +88,6 @@ interface ApiService {
         @Path("id") recipeId: Int
     ): Response<BasicSaveResponse>
 
-
     @GET("api/user/check-follow/{recipeOwnerId}")
     suspend fun checkIfUserFollows(
         @Path("recipeOwnerId") recipeOwnerId: Int
@@ -148,6 +147,52 @@ interface ApiService {
         @Part("password") password: RequestBody?,
         @Part avatar: MultipartBody.Part?
     ): Response<UserProfileResponse>
+
+    @JvmSuppressWildcards
+    @Multipart
+    @POST("api/recipes")
+    suspend fun createRecipe(
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody?,
+        @Part("category_id") categoryId: RequestBody,
+        @Part("cook_time") cookTime: RequestBody,
+        @Part("servings") servings: RequestBody,
+        @Part("ingredients[]") ingredients: List<RequestBody>, // Sử dụng List<RequestBody>
+        @Part("steps[][description]") stepDescriptions: List<RequestBody>, // Sử dụng List<RequestBody>
+        @Part stepImages: List<MultipartBody.Part>,
+        @Part image: MultipartBody.Part // Ảnh chính của công thức
+    ): Response<CreateRecipeResponse>
+
+    @JvmSuppressWildcards
+    @Multipart
+    @POST("api/recipes/{id}")
+    suspend fun updateRecipe(
+        @Path("id") recipeId: Int,
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody?,
+        @Part("category_id") categoryId: RequestBody,
+        @Part("cook_time") cookTime: RequestBody,
+        @Part("servings") servings: RequestBody,
+        @Part("ingredients[]") ingredients: List<RequestBody>,
+        @Part("steps[][description]") stepDescriptions: List<RequestBody>,
+        @Part stepImages: List<MultipartBody.Part>,
+        @Part image: MultipartBody.Part
+    ): Response<CreateRecipeResponse>
+
+    @GET("api/recipes/saved-recipes/{userId}")
+    suspend fun getSavedRecipes(
+        @Path("userId") userId: Int
+    ): Response<RecipeResponse>
+
+    // Định nghĩa API xóa công thức
+    @DELETE("api/recipes/{id}")
+    suspend fun deleteRecipe(
+        @Path("id") recipeId: Int
+    ): Response<BasicSaveResponse>
+
+    // Lấy thông tin người dùng
+    @GET("api/customer/{userId}")
+    suspend fun getCustomerProfile(@Path("userId") userId: Int): Response<CustomerProfileResponse>
 }
 
 data class CategoryResponse(
@@ -220,3 +265,11 @@ data class UserProfileResponse(
     val user: User,
     val recipes: List<Recipe>
 )
+data class CustomerProfileResponse(
+    val success: Boolean,
+    val user: User,
+    val recipes: List<Recipe>
+)
+
+
+

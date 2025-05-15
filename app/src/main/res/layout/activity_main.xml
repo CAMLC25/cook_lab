@@ -99,7 +99,9 @@
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="80dp" />
+            android:layout_marginBottom="80dp">
+
+        </FrameLayout>
 
         <!-- Scrollable content -->
         <androidx.core.widget.NestedScrollView
@@ -175,18 +177,6 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Floating Action Button -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addRecipeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            app:backgroundTint="?attr/colorSecondary"
-            app:tint="?attr/colorOnSecondary"
-            android:contentDescription="Thêm công thức mới"
-            app:layout_behavior="com.google.android.material.floatingactionbutton.FloatingActionButton$Behavior" />
-
         <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
@@ -197,6 +187,22 @@
             app:itemIconTint="?attr/colorOnSurfaceVariant"
             app:itemTextColor="?attr/colorOnSurfaceVariant"
             app:menu="@menu/bottom_nav_menu" />
+
+        <!-- Floating Action Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addRecipeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="83dp"
+            android:contentDescription="Thêm công thức mới"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="?attr/colorSecondary"
+            app:tint="?attr/colorOnSecondary"
+            app:elevation="8dp"
+            app:layout_anchor="@id/fragment_container"
+            app:layout_anchorGravity="bottom|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

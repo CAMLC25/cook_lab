@@ -55,6 +55,23 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addRecipeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="83dp"
+        android:contentDescription="Thêm công thức mới"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="?attr/colorSecondary"
+        app:tint="?attr/colorOnSecondary"
+        app:elevation="8dp"
+        app:layout_anchor="@id/recyclerView"
+        app:layout_anchorGravity="bottom|end" />
+
     <!-- include bottom nav -->
     <include
         layout="@layout/include_bottom_nav"/>
