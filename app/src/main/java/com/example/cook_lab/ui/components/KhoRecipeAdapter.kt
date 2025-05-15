@@ -14,14 +14,9 @@ import com.bumptech.glide.Glide
 import com.example.cook_lab.R
 import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Recipe
-import com.example.cook_lab.ui.recipe.EditRecipeActivity
 import com.example.cook_lab.ui.recipe.RecipeDetailActivity
 
-class UserRecipeAdapter(
-    private var recipes: List<Recipe>,
-    private val onRemoveRecipe: (Int) -> Unit,
-    private val onUpdateRecipe: (Int) -> Unit // Added callback for update
-) : RecyclerView.Adapter<UserRecipeAdapter.RecipeViewHolder>() {
+class KhoRecipeAdapter(private var recipes: List<Recipe>, private val onRemoveSavedRecipe: (Int) -> Unit) : RecyclerView.Adapter<KhoRecipeAdapter.RecipeViewHolder>() {
 
     init {
         Log.e("UserRecipeAdapter", "Recipes: $recipes")
@@ -36,29 +31,26 @@ class UserRecipeAdapter(
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipes[position]
         holder.bind(recipe)
-        Log.e("UserRecipeAdapter", "Binding recipe: $recipe")
 
         // Xử lý sự kiện nhấn giữ vào item
         holder.itemView.setOnLongClickListener {
-            showRecipeOptionsDialog(it.context, recipe) // Hiển thị hộp thoại tùy chọn
+            showRemoveRecipeDialog(it.context, recipe.id) // Sửa chỗ này để sử dụng context đúng
             true // Trả về true để xử lý sự kiện nhấn giữ
         }
     }
 
     override fun getItemCount(): Int = recipes.size
 
-    // Hiển thị hộp thoại tùy chọn (Hủy, Xóa, Cập nhật)
-    private fun showRecipeOptionsDialog(context: Context, recipe: Recipe) {
-        val dialog = AlertDialog.Builder(context)
-            .setTitle("Chọn hành động")
-            .setMessage("Bạn muốn làm gì với công thức này?")
-            .setPositiveButton("Xóa") { _, _ ->
-                onRemoveRecipe(recipe.id) // Gọi phương thức xóa
+    // Phương thức để hiển thị dialog xác nhận bỏ lưu công thức
+    private fun showRemoveRecipeDialog(context: Context, recipeId: Int) {
+        val dialog = AlertDialog.Builder(context) // Sử dụng context đúng
+            .setTitle("Bỏ lưu công thức?")
+            .setMessage("Bạn có muốn xóa công thức này khỏi danh sách đã lưu không?")
+            .setPositiveButton("Có") { _, _ ->
+                // Gọi ViewModel để xóa công thức khỏi danh sách đã lưu
+                onRemoveSavedRecipe(recipeId)
             }
-            .setNeutralButton("Cập nhật") { _, _ ->
-                onUpdateRecipe(recipe.id) // Gọi phương thức cập nhật
-            }
-            .setNegativeButton("Hủy", null)
+            .setNegativeButton("Không", null)
             .create()
 
         dialog.show()

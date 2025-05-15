@@ -67,6 +67,7 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.9")
     implementation ("com.squareup.retrofit2:converter-gson:2.7.2")
     implementation ("com.squareup.okhttp3:okhttp:3.6.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
@@ -76,4 +77,5 @@ dependencies {
 
     implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
 
+    implementation ("androidx.core:core-ktx:1.12.0")
 }

@@ -116,12 +116,12 @@
 
             <!-- Edit profile button -->
             <Button
-                android:id="@+id/btnEditProfile"
+                android:id="@+id/btnFollow"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Sửa hồ sơ cá nhân"
+                android:text="Theo dõi"
                 app:strokeColor="?attr/colorOnSurface"
                 app:strokeWidth="1dp"
                 android:textColor="?attr/colorOnSurface"/>

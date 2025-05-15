@@ -1,5 +1,12 @@
 <!-- app/src/main/res/values/styles.xml -->
 <resources>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@color/input_background</item>
+        <item name="android:popupBackground">@color/input_background</item>
+        <item name="android:dropDownSelector">@color/accent</item>
+    </style>
+
     <!-- Theme của app bạn -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- ... -->
@@ -31,4 +38,5 @@
         <item name="android:windowEnterAnimation">@anim/dialog_fade_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_fade_out</item>
     </style>
+
 </resources>

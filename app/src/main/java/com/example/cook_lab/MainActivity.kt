@@ -32,6 +32,7 @@ import com.example.cook_lab.ui.components.CategoryAdapter
 import com.example.cook_lab.ui.components.LoginPromptDialog
 import com.example.cook_lab.ui.components.RecipeAdapter
 import com.example.cook_lab.ui.profile.UserProfileActivity
+import com.example.cook_lab.ui.recipe.CreateRecipeActivity
 import com.example.cook_lab.ui.recipe.NewRecipesActivity
 import com.example.cook_lab.ui.recipe.RecipeDetailActivity
 import com.example.cook_lab.ui.recipe.SearchHistoryActivity
@@ -67,66 +68,67 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeActivity() {
+        // Determine login state
+        isLoggedIn = !Prefs.token.isNullOrEmpty() && Prefs.userJson != null
+        Log.e("MainActivity", "isLoggedIn: $isLoggedIn")
+
+        // Hiển thị hoặc ẩn addRecipeButton dựa trên trạng thái đăng nhập
+//        binding.addRecipeButton.visibility = if (isLoggedIn) View.VISIBLE else View.GONE
+        binding.addRecipeButton.visibility = View.VISIBLE
+
         // Khởi tạo ViewModel
         viewModel = ViewModelProvider(this).get(UserDataViewModel::class.java)
-
         // Lấy thông tin người dùng từ API và cập nhật vào Prefs
         if (isLoggedIn) {
             viewModel.getUserData()
             Log.e("MainActivity", "getUserData() called")
         }
 
-        // Determine login state
-        isLoggedIn = !Prefs.token.isNullOrEmpty() && Prefs.userJson != null
-        Log.e("MainActivity", "isLoggedIn: $isLoggedIn")
-
         // Observe LiveData từ UserDataViewModel chỉ khi đã đăng nhập
-        if (isLoggedIn) {
-            viewModel.userData.observe(this) { meResponse ->
-                meResponse?.let { response ->
-                    val user = response.user
+        viewModel.userData.observe(this) { meResponse ->
+            meResponse?.let { response ->
+                val user = response.user
 
-                    // Cập nhật ảnh đại diện và thông tin người dùng trong drawer
+                // Cập nhật ảnh đại diện và thông tin người dùng trong drawer
+                Glide.with(this)
+                    .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
+                    .placeholder(R.drawable.account)
+                    .circleCrop()
+                    .into(binding.drawerIcon)
+
+                val navView: NavigationView = binding.navView
+                val header = navView.getHeaderView(0)
+                val imageAvatar = header.findViewById<ImageView>(R.id.imageAvatar)
+                val textName = header.findViewById<TextView>(R.id.textName)
+                val textUsername = header.findViewById<TextView>(R.id.textUsername)
+
+                textName.text = "Xin chào ${user.name}"
+                textUsername.text = "ID: @${user.id_cooklab}"
+
+                Glide.with(this)
+                    .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
+                    .placeholder(R.drawable.account)
+                    .circleCrop()
+                    .into(imageAvatar)
+
+                // Replace menu icon with user avatar when logged in
+                if (isLoggedIn && Prefs.userJson != null) {
                     Glide.with(this)
                         .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
                         .placeholder(R.drawable.account)
                         .circleCrop()
                         .into(binding.drawerIcon)
-
-                    val navView: NavigationView = binding.navView
-                    val header = navView.getHeaderView(0)
-                    val imageAvatar = header.findViewById<ImageView>(R.id.imageAvatar)
-                    val textName = header.findViewById<TextView>(R.id.textName)
-                    val textUsername = header.findViewById<TextView>(R.id.textUsername)
-
-                    textName.text = "Xin chào ${user.name}"
-                    textUsername.text = "ID: @${user.id_cooklab}"
-
-                    Glide.with(this)
-                        .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
-                        .placeholder(R.drawable.account)
-                        .circleCrop()
-                        .into(imageAvatar)
-
-                    // Replace menu icon with user avatar when logged in
-                    if (isLoggedIn && Prefs.userJson != null) {
-                        Glide.with(this)
-                            .load("${ApiClient.BASE_URL.removeSuffix("/")}/${user.avatar}")
-                            .placeholder(R.drawable.account)
-                            .circleCrop()
-                            .into(binding.drawerIcon)
-                        // Remove any tint so avatar shows correctly
-                        binding.drawerIcon.clearColorFilter()
-                        binding.drawerIcon.imageTintList = null
-                    } else {
-                        binding.drawerIcon.setImageResource(R.drawable.start_activity)
-                        val white = ContextCompat.getColor(this, android.R.color.white)
-                        binding.drawerIcon.setColorFilter(white)
-                    }
-
-                    // Ẩn ProgressBar khi dữ liệu được tải
-                    binding.loadingProgressBar.visibility = View.GONE
+                    // Remove any tint so avatar shows correctly
+                    binding.drawerIcon.clearColorFilter()
+                    binding.drawerIcon.imageTintList = null
+                } else {
+                    binding.drawerIcon.setImageResource(R.drawable.start_activity)
+                    val white = ContextCompat.getColor(this, android.R.color.white)
+                    binding.drawerIcon.setColorFilter(white)
                 }
+
+                // Ẩn ProgressBar khi dữ liệu được tải
+                binding.loadingProgressBar.visibility = View.GONE
             }
         }
 
@@ -161,7 +163,9 @@ class MainActivity : AppCompatActivity() {
             } else false
         }
         binding.addRecipeButton.setOnClickListener {
-            Toast.makeText(this, "Thêm công thức mới", Toast.LENGTH_SHORT).show()
+            if (!requireLogin()) return@setOnClickListener
+            startActivity(Intent(this, CreateRecipeActivity::class.java))
+            Toast.makeText(this, "Mở màn hình tạo công thức", Toast.LENGTH_SHORT).show()
         }
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -172,13 +176,20 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_library -> {
                     if (!requireLogin()) return@setOnItemSelectedListener false
-                    startActivity(Intent(this, KhoActivity::class.java))
+                    Prefs.userJson?.let { json ->
+                        val user = gson.fromJson(json, User::class.java)
+                        val userId: Int? = user.id
+                        Log.e("MainActivity_kho", "userId: $userId")
+                        val intent = Intent(this, KhoActivity::class.java)
+                        intent.putExtra("USER_ID", userId)
+                        startActivity(intent)
+                    }
                     true
                 }
+
                 else -> false
             }
         }
-
         // Danh sách công thức mới
         binding.newRecipesArrow.setOnClickListener {
             startActivity(Intent(this, NewRecipesActivity::class.java))

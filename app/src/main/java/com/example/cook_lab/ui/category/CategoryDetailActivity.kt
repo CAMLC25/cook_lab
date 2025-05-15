@@ -11,6 +11,7 @@ import com.example.cook_lab.R
 import com.example.cook_lab.databinding.ActivityCategoryDetailBinding
 import com.example.cook_lab.ui.BaseActivity
 import com.example.cook_lab.ui.components.CategoryDetailAdapter
+import com.example.cook_lab.ui.recipe.CreateRecipeActivity
 import com.example.cook_lab.ui.recipe.RecipeDetailActivity
 import com.example.cook_lab.viewmodel.CategoryViewModel
 
@@ -50,6 +51,11 @@ class CategoryDetailActivity : BaseActivity() {
         binding.recipeRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@CategoryDetailActivity)
             adapter = this@CategoryDetailActivity.adapter
+        }
+        binding.addRecipeButton.setOnClickListener {
+            if (!requireLogin()) return@setOnClickListener
+            startActivity(Intent(this, CreateRecipeActivity::class.java))
+            Toast.makeText(this, "Mở màn hình tạo công thức", Toast.LENGTH_SHORT).show()
         }
 
         // 5. Khởi tạo ViewModel và observe dữ liệu
