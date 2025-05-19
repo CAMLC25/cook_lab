@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cook_lab.R
+import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Category
 
 class CategoryAdapter(
@@ -31,7 +32,8 @@ class CategoryAdapter(
 
             // Xử lý URL ảnh
             val imagePath = category.image?.removePrefix("/") ?: ""
-            val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+//            val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+            val fullImageUrl = ApiClient.BASE_URL + imagePath
 
             Glide.with(itemView)
                 .load(fullImageUrl)

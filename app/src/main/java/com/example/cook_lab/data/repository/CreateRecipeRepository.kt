@@ -34,7 +34,7 @@ class CreateRecipeRepository(private val apiService: ApiService) {
 
     // Phương thức để cập nhật công thức
     suspend fun updateRecipe(
-        recipeId: Int,  // ID công thức cần cập nhật
+        recipeId: Int,
         title: RequestBody,
         description: RequestBody?,
         categoryId: RequestBody,

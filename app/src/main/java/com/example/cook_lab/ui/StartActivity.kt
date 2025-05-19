@@ -32,7 +32,9 @@ class StartActivity : AppCompatActivity() {
         }
 
         binding.startCookingButton.setOnClickListener {
-            showWelcomeDialog()
+//            showWelcomeDialog()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }
     }
 

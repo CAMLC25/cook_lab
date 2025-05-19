@@ -75,11 +75,6 @@ class SearchHistoryActivity : BaseActivity() {
             adapter.setData(historyList ?: emptyList())
         }
 
-        // Observe the delete status
-//        searchHistoryViewModel.success.observe(this) { success ->
-//            if (success) recreate()
-//        }
-
         // Observe errors
         searchHistoryViewModel.error.observe(this, Observer { error ->
             Toast.makeText(this, error, Toast.LENGTH_SHORT).show()

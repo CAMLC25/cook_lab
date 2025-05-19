@@ -20,9 +20,9 @@ import com.example.cook_lab.viewmodel.UserProfileViewModel
 class KhoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityKhoBinding
     private lateinit var viewModelUser: UserProfileViewModel
-    private var visibleRecipeCount = 2 // Số lượng công thức hiển thị ban đầu
-    private var allRecipes: List<Recipe> = emptyList() // Lưu toàn bộ danh sách công thức
-    private lateinit var recipeUserAdapter: KhoRecipeAdapter // Adapter cho RecyclerView danh sách đã lưu
+    private var visibleRecipeCount = 1 // Số lượng công thức hiển thị ban đầu
+    private var allRecipes: List<Recipe> = emptyList()
+    private lateinit var recipeUserAdapter: KhoRecipeAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -152,6 +152,15 @@ class KhoActivity : AppCompatActivity() {
     private fun displaySavedRecipes() {
         binding.tvSavedRecipeCount.text = "( ${allRecipes.size} món )"
 
+        // Đảm bảo visibleRecipeCount không lớn hơn allRecipes.size
+        if (visibleRecipeCount > allRecipes.size) {
+            visibleRecipeCount = allRecipes.size
+        }
+        // Đảm bảo visibleRecipeCount không nhỏ hơn 1 nếu allRecipes không rỗng
+        if (allRecipes.isNotEmpty() && visibleRecipeCount < 1) {
+            visibleRecipeCount = 1
+        }
+
         val recipesToShow = if (visibleRecipeCount >= allRecipes.size) {
             allRecipes // Hiển thị tất cả nếu vượt quá số lượng
         } else {
@@ -159,7 +168,7 @@ class KhoActivity : AppCompatActivity() {
         }
 
         if (::recipeUserAdapter.isInitialized) {
-            recipeUserAdapter.updateRecipes(allRecipes.subList(0, visibleRecipeCount))
+            recipeUserAdapter.updateRecipes(recipesToShow)
         }
 
         binding.saveRecipesRecyclerView.apply {

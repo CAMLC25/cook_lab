@@ -261,7 +261,6 @@ class EditRecipeActivity : AppCompatActivity() {
         })
     }
 
-
     private fun addIngredientRow() {
         val ingredientBinding = ItemIngredientCreateBinding.inflate(LayoutInflater.from(this), binding.ingredientsContainer, false)
         ingredientBinding.removeIngredientButton.setOnClickListener {
@@ -339,6 +338,7 @@ class EditRecipeActivity : AppCompatActivity() {
             val stepBinding = stepView.tag as? ItemStepCreateBinding
             val stepDescription = stepBinding?.stepEditText?.text.toString().trim()
             val stepImageUri = stepImageUris[stepBinding?.stepImageView?.id]
+            Log.e("EditRecipeActivity_123", "Step Image URI: ${stepImageUri}")
 
             if (stepDescription.isNotEmpty()) {
                 stepDescriptions.add(RequestBody.create(MultipartBody.FORM, stepDescription))  // Đảm bảo List<RequestBody>
@@ -373,7 +373,6 @@ class EditRecipeActivity : AppCompatActivity() {
         )
     }
 
-
     private fun validateFields(): Boolean {
         val title = binding.titleEditText.text.toString().trim()
         val cookTime = binding.cookTimeEditText.text.toString().trim()
@@ -398,7 +397,6 @@ class EditRecipeActivity : AppCompatActivity() {
             Toast.makeText(this, "Vui lòng chọn ảnh chính cho công thức", Toast.LENGTH_SHORT).show()
             return false
         }
-
         return true
     }
 
