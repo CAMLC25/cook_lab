@@ -5,9 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cook_lab.R
+import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Recipe
 import com.example.cook_lab.databinding.ItemSearchBinding
 import com.example.cook_lab.databinding.ItemSearchEmptyBinding
+import com.example.cook_lab.ui.components.SearchResultsAdapter.SearchResultsViewHolder.EmptyViewHolder
 
 class SearchResultsAdapter(private val onRecipeClick: (Recipe) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -60,27 +62,47 @@ class SearchResultsAdapter(private val onRecipeClick: (Recipe) -> Unit) : Recycl
             binding.recipeDescription.text = recipe.description ?: "No description available"
             binding.recipeUserTitle.text = recipe.user?.name ?: "Unknown Author"
 
-            val imagePath = recipe.image?.removePrefix("/") ?: ""
-            val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
-            Glide.with(binding.root)
-                .load(fullImageUrl)
-                .placeholder(R.drawable.error_image)
-                .error(R.drawable.error_image)
-                .into(binding.recipeImage)
+//            val imagePath = recipe.image?.removePrefix("/") ?: ""
+//            val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+//            Glide.with(binding.root)
+//                .load(fullImageUrl)
+//                .placeholder(R.drawable.error_image)
+//                .error(R.drawable.error_image)
+//                .into(binding.recipeImage)
+//
+//            val avatarPath = recipe.user?.avatar?.removePrefix("/") ?: ""
+//            val avatarUrl = "http://192.168.88.157:8000/$avatarPath"
+//            Glide.with(binding.root)
+//                .load(avatarUrl)
+//                .placeholder(R.drawable.account)
+//                .error(R.drawable.account)
+//                .circleCrop()
+//                .into(binding.userAvatar)
 
-            val avatarPath = recipe.user?.avatar?.removePrefix("/") ?: ""
-            val avatarUrl = "http://192.168.88.157:8000/$avatarPath"
-            Glide.with(binding.root)
-                .load(avatarUrl)
-                .placeholder(R.drawable.account)
-                .error(R.drawable.account)
-                .circleCrop()
-                .into(binding.userAvatar)
+            recipe.image?.let {
+                val url = ApiClient.BASE_URL + it.removePrefix("/")
+                Glide.with(binding.root)
+                    .load(url)
+                    .placeholder(R.drawable.error_image)
+                    .error(R.drawable.error_image)
+                    .into(binding.recipeImage)
+            } ?: binding.recipeImage.setImageResource(R.drawable.error_image)
 
-            binding.root.setOnClickListener { onRecipeClick(recipe) }
+            recipe.user?.avatar?.let {
+                val url = ApiClient.BASE_URL + it.removePrefix("/")
+                Glide.with(binding.root)
+                    .load(url)
+                    .placeholder(R.drawable.account)
+                    .error(R.drawable.account)
+                    .circleCrop()
+                    .into(binding.userAvatar)
+
+                binding.root.setOnClickListener { onRecipeClick(recipe) }
+            }
         }
-    }
 
-    class EmptyViewHolder(binding: ItemSearchEmptyBinding) : RecyclerView.ViewHolder(binding.root)
+        class EmptyViewHolder(binding: ItemSearchEmptyBinding) :
+            RecyclerView.ViewHolder(binding.root)
+    }
 }
 

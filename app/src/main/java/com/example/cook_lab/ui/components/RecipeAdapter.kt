@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cook_lab.R
+import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Recipe
 
 class RecipeAdapter(
@@ -38,22 +39,29 @@ class RecipeAdapter(
         holder.title.text = recipe.title
         holder.user_name.text = recipe.user.name
         // Xử lý ảnh - đảm bảo không có 2 dấu // trong URL
-        val imagePath = recipe.image?.removePrefix("/") ?: ""
-        val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+//        val imagePath = recipe.image?.removePrefix("/") ?: ""
+//        val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
 
+        val imagePath = recipe.image?.removePrefix("/") ?: ""
+        val fullImageUrl = ApiClient.BASE_URL + imagePath
+        // Sử dụng Glide để tải và hiển thị ảnh
         Glide.with(holder.itemView)
             .load(fullImageUrl)
             .placeholder(R.drawable.error_image) // ảnh tạm khi loading
             .error(R.drawable.error_image)       // ảnh hiển thị nếu lỗi
             .into(holder.image)
 
-        val imagePathAvatar = recipe.user.avatar?.removePrefix("/") ?: ""
-        val fullImageUrlAvatar = "http://192.168.88.157:8000/$imagePathAvatar"
+//        val imagePathAvatar = recipe.user.avatar?.removePrefix("/") ?: ""
+//        val fullImageUrlAvatar = "http://192.168.88.157:8000/$imagePathAvatar"
+
+        val avatarPath = recipe.user?.avatar?.removePrefix("/") ?: ""
+        val fullImageUrlAvatar = ApiClient.BASE_URL + avatarPath
 
         Glide.with(holder.itemView)
             .load(fullImageUrlAvatar)
             .placeholder(R.drawable.account) // ảnh tạm khi loading
             .error(R.drawable.account)       // ảnh hiển thị nếu lỗi
+            .circleCrop()
             .into(holder.imgAvatar)
 
         holder.itemView.setOnClickListener {

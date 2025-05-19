@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cook_lab.R
+import com.example.cook_lab.data.api.ApiClient
 import com.example.cook_lab.data.model.Recipe
 
 class CategoryDetailAdapter(
@@ -46,7 +47,9 @@ class CategoryDetailAdapter(
         holder.recipeUserTitle.text = recipe.user.name
         // Load recipe image
         val imagePath = recipe.image?.removePrefix("/") ?: ""
-        val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+//        val fullImageUrl = "http://192.168.88.157:8000/$imagePath"
+        val fullImageUrl = ApiClient.BASE_URL + imagePath
+
         Glide.with(holder.itemView)
             .load(fullImageUrl)
             .placeholder(R.drawable.error_image)
@@ -55,7 +58,9 @@ class CategoryDetailAdapter(
 
         // Load user avatar
         val avatarPath = recipe.user.avatar?.removePrefix("/") ?: ""
-        val avatarUrl = "http://192.168.88.157:8000/$avatarPath"
+//        val avatarUrl = "http://192.168.88.157:8000/$avatarPath"
+        val avatarUrl = ApiClient.BASE_URL + avatarPath
+
         Glide.with(holder.itemView)
             .load(avatarUrl)
             .placeholder(R.drawable.account)
