@@ -13,6 +13,10 @@ class RecipeViewModel: ViewModel() {
     private val _recipes = MutableLiveData<List<Recipe>>()
     val recipes: LiveData<List<Recipe>> = _recipes
 
+    // LiveData riêng cho trending recipes
+    private val _trendingRecipes = MutableLiveData<List<Recipe>>()
+    val trendingRecipes: LiveData<List<Recipe>> = _trendingRecipes
+
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
@@ -48,6 +52,26 @@ class RecipeViewModel: ViewModel() {
             } catch (e: Exception) {
                 _error.postValue("Lỗi kết nối: ${e.message}")
                 Log.e("RecipeViewModel", "Error: ${e.message}")
+            }
+        }
+    }
+
+    // Hàm fetch trending recipes mới thêm
+    fun fetchTrendingRecipes() {
+        viewModelScope.launch {
+            try {
+                val response = repository.getTrendingRecipes()
+                Log.e("RecipeViewModel1", "Response: $response")
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _trendingRecipes.postValue(response.body()!!.data)
+                    Log.e("RecipeViewModel2", "Trending Recipes: ${_trendingRecipes.value}")
+                } else {
+                    _error.postValue("Lỗi: ${response.message()}")
+                    Log.e("RecipeViewModel3", "Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _error.postValue("Lỗi kết nối: ${e.message}")
+                Log.e("RecipeViewModel4", "Error fetchTrendingRecipes: ${e.message}")
             }
         }
     }

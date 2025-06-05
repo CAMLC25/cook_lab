@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Đặt toolbar vào AppBarLayout để CoordinatorLayout quản lý -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/black">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarTrendingRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/black"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:navigationIcon="@drawable/ic_arrow_back_white"
+            app:title="Những món ăn đang thịnh hành!!!"
+            app:titleTextColor="@android:color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- RecyclerView sẽ “co” xuống dưới AppBarLayout -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTrendingRecipes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:layout_marginBottom="56dp"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addRecipeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="80dp"
+        android:contentDescription="Thêm công thức mới"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="?attr/colorSecondary"
+        app:tint="?attr/colorOnSecondary"
+        app:elevation="8dp"
+        app:layout_anchor="@id/recyclerTrendingRecipes"
+        app:layout_anchorGravity="bottom|end" />
+    <!-- include bottom nav -->
+    <include
+        layout="@layout/include_bottom_nav"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
