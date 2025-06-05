@@ -193,6 +193,10 @@ interface ApiService {
     // Lấy thông tin người dùng
     @GET("api/customer/{userId}")
     suspend fun getCustomerProfile(@Path("userId") userId: Int): Response<CustomerProfileResponse>
+
+    // Trending
+    @GET("api/trending")
+    suspend fun getTrendingRecipes(): Response<RecipeResponse>
 }
 
 data class CategoryResponse(

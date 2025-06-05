@@ -37,6 +37,7 @@ import com.example.cook_lab.ui.recipe.NewRecipesActivity
 import com.example.cook_lab.ui.recipe.RecipeDetailActivity
 import com.example.cook_lab.ui.recipe.SearchHistoryActivity
 import com.example.cook_lab.ui.recipe.SearchResultsActivity
+import com.example.cook_lab.ui.recipe.TrendingRecipesActivity
 import com.example.cook_lab.viewmodel.CategoryViewModel
 import com.example.cook_lab.viewmodel.RecipeViewModel
 import com.example.cook_lab.viewmodel.UserDataViewModel
@@ -144,6 +145,7 @@ class MainActivity : AppCompatActivity() {
         setupDrawer()
         setupCategoryList()
         setupNewRecipesList()
+        setupTrendingRecipesList()
     }
 
     private fun setupListeners() {
@@ -194,6 +196,9 @@ class MainActivity : AppCompatActivity() {
         binding.newRecipesArrow.setOnClickListener {
             startActivity(Intent(this, NewRecipesActivity::class.java))
         }
+        binding.trendingRecipesArrow.setOnClickListener {
+            startActivity(Intent(this, TrendingRecipesActivity::class.java))
+        }
     }
 
     private fun resetToInitialState() {
@@ -216,10 +221,13 @@ class MainActivity : AppCompatActivity() {
             }
             setupCategoryList() // Reset category list
             setupNewRecipesList() // Reset new recipes list
+            setupTrendingRecipesList()
 
             // Scroll RecyclerViews to top
             binding.categoriesRecyclerView.scrollToPosition(0)
             binding.newRecipesRecyclerView.scrollToPosition(0)
+            binding.trendingRecipesRecyclerView.scrollToPosition(0)
+
 
             // Ẩn ProgressBar sau khi reset
             binding.loadingProgressBar.visibility = View.GONE
@@ -334,6 +342,29 @@ class MainActivity : AppCompatActivity() {
             // Ẩn ProgressBar nếu có lỗi
             binding.loadingProgressBar.visibility = View.GONE
         }
+    }
+    private fun setupTrendingRecipesList() {
+        val recipeAdapter = RecipeAdapter { recipe ->
+            startActivity(Intent(this, RecipeDetailActivity::class.java).apply {
+                putExtra("RECIPE_ID", recipe.id)
+            })
+        }
+        binding.trendingRecipesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recipeAdapter
+        }
+        val recipeViewModel = ViewModelProvider(this)[RecipeViewModel::class.java]
+        recipeViewModel.trendingRecipes.observe(this) { list ->
+            recipeAdapter.setData(list)
+            binding.loadingProgressBar.visibility = View.GONE
+        }
+
+        recipeViewModel.error.observe(this) { error ->
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+            // Ẩn ProgressBar nếu có lỗi
+            binding.loadingProgressBar.visibility = View.GONE
+        }
+        recipeViewModel.fetchTrendingRecipes()
     }
 
     private fun searchRecipes(query: String) {

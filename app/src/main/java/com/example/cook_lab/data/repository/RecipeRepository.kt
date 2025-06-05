@@ -8,4 +8,8 @@ class RecipeRepository {
     suspend fun getAllRecipes(): Response<RecipeResponse> {
         return ApiClient.apiService.getAllRecipes()
     }
+
+    suspend fun getTrendingRecipes(): Response<RecipeResponse> {
+        return ApiClient.apiService.getTrendingRecipes()
+    }
 }
