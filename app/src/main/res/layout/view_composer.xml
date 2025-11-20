@@ -1,0 +1,33 @@
+<!-- res/layout/view_composer.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:background="#FFFFFF"
+    android:elevation="2dp">
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:minHeight="40dp"
+        android:maxLines="4"
+        android:gravity="center_vertical"
+        android:hint="Nhập tin nhắn..."
+        android:imeOptions="actionSend"
+        android:inputType="textCapSentences|textMultiLine"
+        android:background="@android:color/transparent"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"/>
+
+    <ImageButton
+        android:id="@+id/btnSend"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="Gửi"
+        android:backgroundTint="#14B8A6"
+        android:background="@drawable/shape_btn_filled"
+        android:src="@drawable/ic_send"/>
+</LinearLayout>

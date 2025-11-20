@@ -28,6 +28,7 @@ import com.example.cook_lab.databinding.ActivityMainBinding
 import com.example.cook_lab.ui.StartActivity
 import com.example.cook_lab.ui.auth.LoginActivity
 import com.example.cook_lab.ui.category.CategoryDetailActivity
+import com.example.cook_lab.ui.chat.ChatActivity
 import com.example.cook_lab.ui.components.CategoryAdapter
 import com.example.cook_lab.ui.components.LoginPromptDialog
 import com.example.cook_lab.ui.components.RecipeAdapter
@@ -188,6 +189,17 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
+                R.id.nav_ai -> {
+                    binding.bottomNavigationView.post {
+                        binding.bottomNavigationView.menu.findItem(R.id.nav_home).isChecked = true
+                    }
+                    startActivity(
+                        Intent(this, ChatActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    )
+                    true
+                }
+
 
                 else -> false
             }

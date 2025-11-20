@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
@@ -21,6 +23,11 @@
         android:theme="@style/Theme.CookLab"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CookLab.NoActionBar"
+            android:windowSoftInputMode="stateUnchanged|adjustResize" />
         <activity
             android:name=".ui.recipe.TrendingRecipesActivity"
             android:exported="false" />

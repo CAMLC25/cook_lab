@@ -78,4 +78,9 @@ dependencies {
     implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
 
     implementation ("androidx.core:core-ktx:1.12.0")
+    //
+    implementation("io.coil-kt:coil:2.5.0")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
 }

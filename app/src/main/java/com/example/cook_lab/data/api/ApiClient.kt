@@ -9,7 +9,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    const val BASE_URL = "http://172.20.10.2:8000/"
+//    const val BASE_URL = "http://172.20.10.2:8080/"
+    const val BASE_URL = "http://192.168.88.157:8080/"
 
     val apiService: ApiService by lazy {
         val gson = GsonBuilder()
@@ -32,9 +33,9 @@ object ApiClient {
                 }
                 chain.proceed(builder.build())
             }
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout( 20, TimeUnit.SECONDS)
             .build()
 
         Retrofit.Builder()
@@ -44,4 +45,6 @@ object ApiClient {
             .build()
             .create(ApiService::class.java)
     }
+
+    fun api(): ApiService = apiService
 }

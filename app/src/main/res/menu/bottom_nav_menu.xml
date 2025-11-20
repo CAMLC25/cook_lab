@@ -5,6 +5,10 @@
         android:icon="@drawable/home"
         android:title="Trang chủ" />
     <item
+        android:id="@+id/nav_ai"
+        android:icon="@drawable/ic_chat_bubble"
+        android:title="🍳 AI" />
+    <item
         android:id="@+id/nav_library"
         android:icon="@android:drawable/ic_menu_save"
         android:title="Kho món ngon của bạn" />

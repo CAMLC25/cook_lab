@@ -4,4 +4,11 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+    <!-- Biến thể NoActionBar dùng cho ChatActivity -->
+    <style name="Theme.CookLab.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- tuỳ chọn: làm trong suốt status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>

@@ -1,6 +1,8 @@
 package com.example.cook_lab.data.api
 
 import com.example.cook_lab.data.model.Category
+import com.example.cook_lab.data.model.ChatRequest
+import com.example.cook_lab.data.model.ChatResponse
 import com.example.cook_lab.data.model.Comment
 import com.example.cook_lab.data.model.CreateRecipeResponse
 import com.example.cook_lab.data.model.LoginRequest
@@ -197,6 +199,13 @@ interface ApiService {
     // Trending
     @GET("api/trending")
     suspend fun getTrendingRecipes(): Response<RecipeResponse>
+
+    @POST("api/chat")
+    suspend fun chatParse(@Body req: ChatRequest): ChatResponse
+
+    @POST("/api/chat")
+    suspend fun ask(@Body body: Map<String, @JvmSuppressWildcards Any>): ChatResponse
+
 }
 
 data class CategoryResponse(

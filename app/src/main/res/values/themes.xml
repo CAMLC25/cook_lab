@@ -25,4 +25,11 @@
         <item name="colorOnSurface">@android:color/white</item>
         <item name="colorOnSurfaceVariant">#B0BEC5</item>
     </style>
+    <!-- Biến thể NoActionBar dùng cho ChatActivity -->
+    <style name="Theme.CookLab.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- tuỳ chọn: làm trong suốt status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>
