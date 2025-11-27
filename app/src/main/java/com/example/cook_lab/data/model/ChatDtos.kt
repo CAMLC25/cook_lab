@@ -42,13 +42,22 @@ data class CatalogHit(
     @SerializedName("time_min") val timeMin: Int?
 )
 
+//data class AiRecipe(
+//    val title: String,
+//    val servings: Int? = null,
+//    @SerializedName("time_min") val timeMin: Int? = null,
+//    val ingredients: List<String> = emptyList(),
+//    val steps: List<String> = emptyList(),
+//    val tips: List<String> = emptyList()
+//)
+
 data class AiRecipe(
-    val title: String,
-    val servings: Int? = null,
-    @SerializedName("time_min") val timeMin: Int? = null,
-    val ingredients: List<String> = emptyList(),
-    val steps: List<String> = emptyList(),
-    val tips: List<String> = emptyList()
+    @SerializedName("title")       val title: String = "",
+    @SerializedName("servings")    val servings: Int? = null,
+    @SerializedName("time_min")    val timeMin: Int? = null,
+    @SerializedName("ingredients") val ingredients: List<String> = emptyList(),
+    @SerializedName("steps")       val steps: List<String> = emptyList(),
+    @SerializedName("tips")        val tips: List<String> = emptyList()
 )
 
 data class ChatResponse(

@@ -9,8 +9,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-//    const val BASE_URL = "http://172.20.10.2:8080/"
-    const val BASE_URL = "http://192.168.88.157:8080/"
+    const val BASE_URL = "http://172.20.10.2:8080/"
+//    const val BASE_URL = "http://192.168.88.157:8080/"
 
     val apiService: ApiService by lazy {
         val gson = GsonBuilder()
